@@ -9,12 +9,15 @@ const TicTacToe: React.FC<TicTacToeProps> = ({board}) => {
     const [nextTurn, setNextTurn] = useState<Boolean>(true);
 
     const handleCellClick = (e: React.MouseEvent<HTMLElement>) => { 
-        if(nextTurn)
-            (e.target as HTMLElement).innerHTML = 'X';
-        else {
-            (e.target as HTMLElement).innerHTML = 'O';
+        if((e.target as HTMLElement).innerHTML === '') {
+            if(nextTurn)
+                (e.target as HTMLElement).innerHTML = 'X';
+            else {
+                (e.target as HTMLElement).innerHTML = 'O';
+            }
+            setNextTurn(prev => !prev);
+            localStorage.setItem('nextTurn', nextTurn + '');
         }
-        setNextTurn(prev => !prev);
     }
 
     return(
