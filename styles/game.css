@@ -1,0 +1,14 @@
+.game__field {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.row {
+    display: flex;
+}
+
+.row__cell {
+    height: 40px;
+    width: 40px;
+    border: 1px solid green;
+}
