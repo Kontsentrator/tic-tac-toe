@@ -7,7 +7,7 @@ type SquareProps = {
 
 const Cell: React.FC<SquareProps> = ({value, onClick}) => {
     return(
-        <div className="row__cell" onClick={(e) => onClick(e)}>
+        <div className="cell" onClick={(e) => onClick(e)}>
             {value}
         </div>
     );
