@@ -1,18 +1,17 @@
-.game__field {
+.field {
     display: inline-block;
     margin: 0 auto;
+    width: 120px;
+    height: 120px;
 }
 
-.row {
-    display: flex;
-}
-
-.row__cell {
+.cell {
     height: 40px;
     width: 40px;
     border: 1px solid green;
+    display: inline-block;
 }
 
-.row__cell:hover {
+.cell:hover {
     background-color: gainsboro;
 }
