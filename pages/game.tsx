@@ -65,6 +65,7 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
 
     // Перезапуск игры
     const restartGame = () => {
+        console.log("Перезапуск");
         localStorage.clear();
         setBoard(Array(9).fill(''));
         setPlayerNextTurn(playerFirst);
