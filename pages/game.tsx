@@ -2,22 +2,15 @@ import React, { useState, useEffect } from "react";
 import Cell from "./cell";
 
 type TicTacToeProps = {
-    
+    playerFirst: boolean
 }
 
-const TicTacToe: React.FC<TicTacToeProps> = () => {
+const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
     const [board, setBoard] = useState<string[]>(Array(9).fill('')); // Поле игры
-    const [playerNextTurn, setPlayerNextTurn] = useState<Boolean>(true); // Чей ход следующий
-    const [restart, setRestart] = useState<boolean>(true);
+    const [playerNextTurn, setPlayerNextTurn] = useState<Boolean>(playerFirst); // Чей ход следующий
+    const [restart, setRestart] = useState<boolean>(false);
 
     // -------------- Эффекты -------------
-    // Проверка, что на поле остались пустые клетки
-    const hasEmptyCells = (array: string[]): boolean => {
-        return !array.every(item => item !== '');
-    }
-    useEffect(() => {
-        console.log(hasEmptyCells(board));
-    }, [hasEmptyCells]);
 
     // Перезапуск игры
     useEffect(() => {
@@ -46,7 +39,7 @@ const TicTacToe: React.FC<TicTacToeProps> = () => {
 
     // Ход бота
     useEffect(() => {
-        if(!playerNextTurn) {
+        if(!playerNextTurn && hasEmptyCells(board)) {
             let tempBoard = board;
             let rand;
             do {
@@ -60,29 +53,36 @@ const TicTacToe: React.FC<TicTacToeProps> = () => {
 
     // -------------- Методы -------------
 
+    // Вывод случайного числа
     const random = (min: number, max: number): number => {
         return min + (Math.random() * (max-min));
     }
 
-    
+    // Проверка, что на поле остались пустые клетки
+    const hasEmptyCells = (array: string[]): boolean => {
+        return !array.every(item => item !== '');
+    }
 
+    // Перезапуск игры
     const restartGame = () => {
+        localStorage.clear();
         setBoard(Array(9).fill(''));
-        setPlayerNextTurn(true);
+        setPlayerNextTurn(playerFirst);
     }
 
     // Обработка клика по клетке поля
     const handleCellClick = (id: number) => { 
         let tempBoard = board;
-        if(playerNextTurn)
+        if(playerNextTurn && tempBoard[id] === '') {
             tempBoard[id] = 'x';
-
-        setBoard(tempBoard);
-        setPlayerNextTurn(prev => !prev);
+            setBoard(tempBoard);
+            setPlayerNextTurn(prev => !prev);
+        }
     }
 
     return(
         <div className="game">
+            <p>{playerFirst ? "Вы ходите первым" : "Вы ходите вторым"}</p>
             <div className="field">
                 {board.map((value, index) =>
                     <Cell 
