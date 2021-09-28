@@ -1,13 +1,14 @@
 import React from "react";
 
-type SquareProps = {
+type CellProps = {
     value: string,
-    onClick(e: React.MouseEvent<HTMLElement>): void
+    onClick(): void
 }
 
-const Cell: React.FC<SquareProps> = ({value, onClick}) => {
+const Cell: React.FC<CellProps> = ({value, onClick}) => {
+    console.log();
     return(
-        <div className="cell" onClick={(e) => onClick(e)}>
+        <div className="cell" onClick={onClick}>
             {value}
         </div>
     );
