@@ -1,25 +1,10 @@
 import React, { useState } from 'react';
 import TicTacToe from './game';
 import { createStore } from 'redux';
-import { PayloadAction } from 'redux';
+import { Observable, Action } from 'redux';
+import { StateObservable } from 'redux-observable';
 
-const defaultState = {
-  cash: 0,
-}
-
-const reducer = (state = defaultState, action: PayloadAction) => {
-  switch(action.type) {
-    case "ADD_CASH":
-      return {...state, cash: state.cash + action.payload}
-    case "GET_CASH":
-      return {...state, cash: state.cash - action.payload}
-
-    default:
-      return state;
-  }
-}
-
-const store = createStore(reducer);
+function (action$: Observable<Action>, state$: StateObservable<State>): Observable<Action>;
 
 export default function Home() {
   return (
