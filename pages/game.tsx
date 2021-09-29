@@ -27,16 +27,6 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
             setPlayerNextTurn(JSON.parse(localStorage.getItem('playerNextTurn') as string));
     }, []);
 
-    // Установка поля игры в localhost
-    useEffect(() => {
-        localStorage.setItem('board', JSON.stringify(board));
-    }, [board.values(), board]);
-
-    // Установка значения, кто ходит следующим
-    useEffect(() => {
-        localStorage.setItem('playerNextTurn', JSON.stringify(playerNextTurn));
-    }, [playerNextTurn]);
-
     // Ход бота
     useEffect(() => {
         if(!playerNextTurn && hasEmptyCells(board)) {
@@ -49,6 +39,16 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
             setBoard(tempBoard);
             setPlayerNextTurn(prev => !prev);
         }
+    }, [playerNextTurn]);
+
+    // Установка поля игры в localhost
+    useEffect(() => {
+        localStorage.setItem('board', JSON.stringify(board));
+    }, [board.values(), board]);
+
+    // Установка значения, кто ходит следующим
+    useEffect(() => {
+        localStorage.setItem('playerNextTurn', JSON.stringify(playerNextTurn));
     }, [playerNextTurn]);
 
     // -------------- Методы -------------
