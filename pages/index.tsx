@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
+import { Provider } from 'react-redux';
 import TicTacToe from './game';
-import { createStore } from 'redux';
-import { Observable, Action } from 'redux';
-import { StateObservable } from 'redux-observable';
-
-function (action$: Observable<Action>, state$: StateObservable<State>): Observable<Action>;
+import {myStore} from './store/store';
 
 export default function Home() {
   return (
     <div className="game__wrap">
-      <TicTacToe playerFirst={true} />
+      <Provider store={myStore}>
+        <TicTacToe playerFirst={true} />
+      </Provider>
     </div>
   )
 }
