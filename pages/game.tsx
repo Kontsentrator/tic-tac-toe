@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Observable } from 'rxjs';
 import Cell from "./cell";
+
+import { IState } from "./store/store";
 
 type TicTacToeProps = {
     playerFirst: boolean
@@ -10,21 +14,26 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
     const [playerNextTurn, setPlayerNextTurn] = useState<Boolean>(playerFirst); // Чей ход следующий
     const [restart, setRestart] = useState<boolean>(false);
 
+    const dispatch = useDispatch();
+    const board1 = useSelector((state: IState) => state.board);
+    
+    const move = () => {
+        dispatch({type: "MOVE", payload: {flag: "x", pos: 5}})
+    }
+
+    // const stream$ = new Observable(observer => {
+    //     observer.next(board);
+    // });
+    // stream$.subscribe(
+    //     (v) => console.log(v)
+    // );
+
     // -------------- Эффекты -------------
 
     // Перезапуск игры
     useEffect(() => {
         if(restart)
             restartGame();
-    }, []);
-
-    // Загрузка значений из localstorage
-    useEffect(() => {
-        if(localStorage.getItem('board'))
-            setBoard(JSON.parse(localStorage.getItem('board') as string));
-        
-        if(localStorage.getItem('playerNextTurn'))
-            setPlayerNextTurn(JSON.parse(localStorage.getItem('playerNextTurn') as string));
     }, []);
 
     // Ход бота
@@ -50,6 +59,15 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
     useEffect(() => {
         localStorage.setItem('playerNextTurn', JSON.stringify(playerNextTurn));
     }, [playerNextTurn]);
+
+    // Загрузка значений из localstorage
+    useEffect(() => {
+        if(localStorage.getItem('board'))
+            setBoard(JSON.parse(localStorage.getItem('board') as string));
+        
+        if(localStorage.getItem('playerNextTurn'))
+            setPlayerNextTurn(JSON.parse(localStorage.getItem('playerNextTurn') as string));
+    }, []);
 
     // -------------- Методы -------------
 
