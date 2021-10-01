@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Observable } from 'rxjs';
 import Cell from "./cell";
 
 import { useAppSelector, useAppDispatch } from './store/hooks';
@@ -19,7 +17,9 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
     const dispatch = useAppDispatch();
 
     const move = () => {
-        dispatch(move);
+        const board = useAppSelector(state => state.myReducer.board);
+        const dispatch = useAppDispatch();
+        move({flag: "x", pos: 5});
     }
     
 
@@ -34,9 +34,9 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
 
     // Перезапуск игры
     useEffect(() => {
-        if(restart)
+        if(restart) {
             restartGame();
-        dispatch(move);
+        }
     }, []);
 
     // Ход бота
@@ -90,6 +90,7 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
         localStorage.clear();
         setBoard(Array(9).fill(''));
         setPlayerNextTurn(playerFirst);
+        move();
     }
 
     // Обработка клика по клетке поля
