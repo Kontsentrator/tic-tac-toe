@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Observable } from 'rxjs';
 import Cell from "./cell";
 
-import { IState } from "./store/store";
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import { move } from './store/boardSlice';
 
 type TicTacToeProps = {
     playerFirst: boolean
@@ -14,12 +15,13 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
     const [playerNextTurn, setPlayerNextTurn] = useState<Boolean>(playerFirst); // Чей ход следующий
     const [restart, setRestart] = useState<boolean>(false);
 
-    const dispatch = useDispatch();
-    const board1 = useSelector((state: IState) => state.board);
-    
+    const count = useAppSelector(state => state.myReducer.board);
+    const dispatch = useAppDispatch();
+
     const move = () => {
-        dispatch({type: "MOVE", payload: {flag: "x", pos: 5}})
+        dispatch(move);
     }
+    
 
     // const stream$ = new Observable(observer => {
     //     observer.next(board);
@@ -34,6 +36,7 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
     useEffect(() => {
         if(restart)
             restartGame();
+        dispatch(move);
     }, []);
 
     // Ход бота
