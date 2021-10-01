@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface IBoardState {
-    board: Array<String>
+    board: Array<string>
 }
 
 interface IPayload {
