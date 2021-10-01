@@ -13,13 +13,11 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
     const [playerNextTurn, setPlayerNextTurn] = useState<Boolean>(playerFirst); // Чей ход следующий
     const [restart, setRestart] = useState<boolean>(false);
 
-    const count = useAppSelector(state => state.myReducer.board);
+    const board1 = useAppSelector(state => state.myReducer.board);
     const dispatch = useAppDispatch();
 
-    const move = () => {
-        const board = useAppSelector(state => state.myReducer.board);
-        const dispatch = useAppDispatch();
-        move({flag: "x", pos: 5});
+    const setMove = (flag: string, pos: number) => {
+        dispatch({type: move.type, payload: {flag: flag, pos: pos}});
     }
     
 
@@ -47,6 +45,7 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
             do {
                 rand = Math.round(random(0, 9));
             } while(tempBoard[rand] !== '');
+            setMove("o", rand);
             tempBoard[rand] = 'o';
             setBoard(tempBoard);
             setPlayerNextTurn(prev => !prev);
@@ -90,15 +89,16 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
         localStorage.clear();
         setBoard(Array(9).fill(''));
         setPlayerNextTurn(playerFirst);
-        move();
     }
 
     // Обработка клика по клетке поля
     const handleCellClick = (id: number) => { 
         let tempBoard = board;
         if(playerNextTurn && tempBoard[id] === '') {
-            tempBoard[id] = 'x';
-            setBoard(tempBoard);
+            // tempBoard[id] = 'x';
+            // setBoard(tempBoard);
+
+            setMove("x", id);
             setPlayerNextTurn(prev => !prev);
         }
     }
@@ -107,7 +107,7 @@ const TicTacToe: React.FC<TicTacToeProps> = ({playerFirst}) => {
         <div className="game">
             <p>{playerFirst ? "Вы ходите первым" : "Вы ходите вторым"}</p>
             <div className="field">
-                {board.map((value, index) =>
+                {board1.map((value, index) =>
                     <Cell 
                         key={index} 
                         onClick={() => handleCellClick(index)} 
