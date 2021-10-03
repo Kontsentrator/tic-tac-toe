@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="game__wrap">
       <Provider store={store}>
-        <TicTacToe playerFirst={true} />
+        <TicTacToe />
       </Provider>
     </div>
   )
