@@ -4,6 +4,8 @@ import Cell from "./cell";
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import { move, restart } from './store/boardSlice';
 
+import handler from './api/user';
+
 const TicTacToe: React.FC = () => {
     const board = useAppSelector(state => state.myReducer.board);
     const nextTurn = useAppSelector(state => state.myReducer.nextTurn);
@@ -12,6 +14,8 @@ const TicTacToe: React.FC = () => {
     const setMove = (flag: string, pos: number) => {
         dispatch({type: move.type, payload: {flag: flag, pos: pos}});
     }
+
+    console.log(handler);
     
     // const stream$ = new Observable(observer => {
     //     observer.next(board);
@@ -21,13 +25,6 @@ const TicTacToe: React.FC = () => {
     // );
 
     // -------------- Эффекты -------------
-
-    // Перезапуск игры
-    useEffect(() => {
-        //if(restart) {
-            restartGame();
-        //}
-    }, []);
 
     // Ход бота
     useEffect(() => {
