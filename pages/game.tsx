@@ -4,9 +4,26 @@ import Cell from "./cell";
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import { move, restart } from './store/boardSlice';
 
-import handler from './api/user';
+import { GetStaticProps } from "next";
+import {Observable} from "rxjs";
 
-const TicTacToe: React.FC = () => {
+interface IStaticProps {
+    id?: number,
+    status?: string
+}
+
+export const getStaticProps: GetStaticProps = async (context) => {
+    const data: IStaticProps = await fetch("http://localhost:3000/api/user").then((res) => 
+        {return res.json()})
+    return {
+        props: { 
+            id: data.id,
+            status: data.status
+        }
+    }
+}
+
+const TicTacToe: React.FC<IStaticProps> = ({id, status}) => {
     const board = useAppSelector(state => state.myReducer.board);
     const nextTurn = useAppSelector(state => state.myReducer.nextTurn);
     const dispatch = useAppDispatch();
@@ -14,17 +31,33 @@ const TicTacToe: React.FC = () => {
     const setMove = (flag: string, pos: number) => {
         dispatch({type: move.type, payload: {flag: flag, pos: pos}});
     }
-
-    console.log(handler);
     
     // const stream$ = new Observable(observer => {
     //     observer.next(board);
     // });
     // stream$.subscribe(
-    //     (v) => console.log(v)
+    //     () => {
+    //         if(!nextTurn && hasEmptyCells(board)) {
+    //             let rand;
+    //             do {
+    //                 rand = Math.round(random(0, 9));
+    //             } while(board[rand] !== '');
+    //             setMove("o", rand);
+    //         }
+    //     }
     // );
 
     // -------------- Эффекты -------------
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch("http://localhost:3000/api/user");
+            const data: IStaticProps = await response.json();
+            console.log(data.status);
+        }
+
+        fetchData();
+    }, []);
 
     // Ход бота
     useEffect(() => {
@@ -75,6 +108,7 @@ const TicTacToe: React.FC = () => {
             </div>
             <button className="button__restart" onClick={restartGame}>Начать заново</button>
             <span>{hasEmptyCells(board) ? '' : 'Игра окончена'}</span>
+            <button onClick={() => console.log(status)}>кнопка</button>
         </div>
     );
 }
