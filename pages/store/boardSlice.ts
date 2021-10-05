@@ -5,7 +5,7 @@ interface IBoardState {
     nextTurn: boolean
 }
 
-const initialState: IBoardState = {
+export const initialState: IBoardState = {
     board: Array(9).fill(''),
     nextTurn: true
 }
