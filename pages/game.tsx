@@ -4,30 +4,27 @@ import Cell from "./cell";
 import { useAppSelector, useAppDispatch } from './store/hooks';
 import { move, restart } from './store/boardSlice';
 
-import { GetStaticProps } from "next";
-import {Observable} from "rxjs";
+import { GetStaticPropsResult, InferGetStaticPropsType, GetStaticProps } from "next";
+import { Observable } from "rxjs";
 
 interface IStaticProps {
-    id?: number,
-    status?: string
+    id: number,
+    status: string
 }
 
-export const getStaticProps: GetStaticProps = async (context) => {
-    const data: IStaticProps = await fetch("http://localhost:3000/api/user").then((res) => 
-        {return res.json()})
-    return {
-        props: { 
-            id: data.id,
-            status: data.status
-        }
-    }
+export async function getStaticProps(): Promise<GetStaticPropsResult<IStaticProps[]>> {
+    const response = await fetch("http://localhost:3000/api/user");
+    const data = await response.json();
+
+    console.log(data);
+    return {props: data}
 }
 
-const TicTacToe: React.FC<IStaticProps> = ({id, status}) => {
+const TicTacToe = (data: InferGetStaticPropsType<typeof getStaticProps>) => {
     const board = useAppSelector(state => state.myReducer.board);
     const nextTurn = useAppSelector(state => state.myReducer.nextTurn);
     const dispatch = useAppDispatch();
-
+    console.log("Генерация");
     const setMove = (flag: string, pos: number) => {
         dispatch({type: move.type, payload: {flag: flag, pos: pos}});
     }
@@ -48,16 +45,6 @@ const TicTacToe: React.FC<IStaticProps> = ({id, status}) => {
     // );
 
     // -------------- Эффекты -------------
-
-    useEffect(() => {
-        const fetchData = async () => {
-            const response = await fetch("http://localhost:3000/api/user");
-            const data: IStaticProps = await response.json();
-            console.log(data.status);
-        }
-
-        fetchData();
-    }, []);
 
     // Ход бота
     useEffect(() => {
@@ -108,7 +95,7 @@ const TicTacToe: React.FC<IStaticProps> = ({id, status}) => {
             </div>
             <button className="button__restart" onClick={restartGame}>Начать заново</button>
             <span>{hasEmptyCells(board) ? '' : 'Игра окончена'}</span>
-            <button onClick={() => console.log(status)}>кнопка</button>
+            <button onClick={() => console.log(data)}>кнопка</button>
         </div>
     );
 }
