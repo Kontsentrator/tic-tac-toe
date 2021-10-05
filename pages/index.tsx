@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 import TicTacToe from './game';
-import {store} from './store/store';
+import { store } from './store/store';
 
 export default function Home() {
   return (
