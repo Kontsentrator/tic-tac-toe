@@ -8,9 +8,10 @@ import { Observable } from "rxjs";
 import { Datas } from '../interfaces/interface';
 
 function TicTacToe({data}: Datas) {
-    const board = useAppSelector(state => state.myReducer.board);
-    const nextTurn = useAppSelector(state => state.myReducer.nextTurn);
+    const board = useAppSelector(state => state.boardReducer.board);
+    const nextTurn = useAppSelector(state => state.boardReducer.nextTurn);
     const dispatch = useAppDispatch();
+
     const setMove = (flag: string, pos: number) => {
         dispatch({type: move.type, payload: {flag: flag, pos: pos}});
     }
@@ -43,18 +44,23 @@ function TicTacToe({data}: Datas) {
         }
     }, [nextTurn]);
 
+    // Автоматическое сохранение информации о ходе
+    useEffect(() => {
+        saveMove();
+    }, [board, nextTurn]);
+
     // -------------- Методы -------------
 
-    const submitMove = async () => {
+    // Cохранение информации о ходе
+    const saveMove = async () => {
         const response = await fetch("http://localhost:3000/api/board", {
             method: 'POST',
-            body: JSON.stringify({board}),
+            body: JSON.stringify({board, nextTurn}),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
         const data = await response.json();
-        console.log(data);
     }
 
     // Вывод случайного числа
@@ -93,7 +99,6 @@ function TicTacToe({data}: Datas) {
             </div>
             <button className="button__restart" onClick={restartGame}>Начать заново</button>
             <span>{hasEmptyCells(board) ? '' : 'Игра окончена'}</span>
-            <button onClick={submitMove}>Подтвердить</button>
             <button onClick={() => console.log(data)}>Инфо</button>
         </div>
     );
