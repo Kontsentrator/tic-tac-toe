@@ -1,12 +1,14 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 interface IBoardState {
-    board: Array<string>,
+    board: Array<string[]>,
     nextTurn: boolean
 }
 
 export const initialState: IBoardState = {
-    board: Array(9).fill(''),
+    board: [['', '', ''],
+            ['', '', ''],
+            ['', '', '']],
     nextTurn: true
 }
 
@@ -14,8 +16,10 @@ export const boardSlice = createSlice({
     name: "board",
     initialState,
     reducers: {
-        move: (state, action: PayloadAction<{flag: string, pos: number}>) => {
-            state.board[action.payload.pos] = action.payload.flag;
+        move: (state, action: PayloadAction<{flag: string, pos: number[]}>) => {
+            let col = action.payload.pos[0];
+            let row = action.payload.pos[1];
+            state.board[col][row] = action.payload.flag;
             state.nextTurn = !state.nextTurn;
         },
         restart: (state) => {
