@@ -1,8 +1,11 @@
 .field {    
-    width: 120px;
-    height: 120px;
-    display: flex;
+    display: inline-block;
     flex-wrap: wrap;
+    margin: 0 auto;
+}
+
+.row {
+    display: flex;
 }
 
 .cell {
