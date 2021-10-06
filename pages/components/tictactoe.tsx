@@ -12,8 +12,8 @@ function TicTacToe({data}: Datas) {
     const nextTurn = useAppSelector(state => state.boardReducer.nextTurn);
     const dispatch = useAppDispatch();
 
-    const setMove = (flag: string, pos: number) => {
-        dispatch({type: move.type, payload: {flag: flag, pos: pos}});
+    const setMove = (flag: string, col: number, row: number) => {
+        dispatch({type: move.type, payload: {flag: flag, pos: [col, row]}});
     }
     
     // const stream$ = new Observable(observer => {
@@ -33,14 +33,22 @@ function TicTacToe({data}: Datas) {
 
     // -------------- Эффекты -------------
 
+    useEffect(() => {
+        console.log("Проверка победителя");
+        if(checkWinner()) {
+            console.log("Победитель!");
+        }
+    }, [board, nextTurn])
+
     // Ход бота
     useEffect(() => {
         if(!nextTurn && hasEmptyCells(board)) {
-            let rand;
+            let rand1, rand2;
             do {
-                rand = Math.round(random(0, 9));
-            } while(board[rand] !== '');
-            setMove("o", rand);
+                rand1 = Math.round(random(0, 2));
+                rand2 = Math.round(random(0, 2));
+            } while(board[rand1][rand2] !== '');
+            setMove("o", rand1, rand2);
         }
     }, [nextTurn]);
 
@@ -50,6 +58,18 @@ function TicTacToe({data}: Datas) {
     }, [board, nextTurn]);
 
     // -------------- Методы -------------
+
+    const checkWinner = (): boolean => {
+        let check = true;
+        let flag = "x";
+        for(let row = 0; row < 3; row++) {
+            check = check && board[row].every(el => el === flag);
+            if(check) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Cохранение информации о ходе
     const saveMove = async () => {
@@ -69,8 +89,8 @@ function TicTacToe({data}: Datas) {
     }
 
     // Проверка, что на поле остались пустые клетки
-    const hasEmptyCells = (array: string[]): boolean => {
-        return !array.every(item => item !== '');
+    const hasEmptyCells = (array: string[][]): boolean => {
+        return !array.every(row => row.every(el => el !== ''));
     }
 
     // Перезапуск игры
@@ -79,23 +99,34 @@ function TicTacToe({data}: Datas) {
     }
 
     // Обработка клика по клетке поля
-    const handleCellClick = (id: number) => { 
-        if(nextTurn && board[id] === '') {
-            setMove("x", id);
+    const handleCellClick = (row: number, col: number) => { 
+        if(nextTurn && board[col][row] === '') {
+            setMove("x", col, row);
         }
+    }
+
+    // Создание поля для игры
+    const createBoard = () => {
+        let field = [];
+        for(let row = 0; row < 3; row++) {
+            let rows = [];
+            for(let col = 0; col < 3; col++) {
+                rows.push(<Cell 
+                    key={col} 
+                    onClick={() => handleCellClick(col, row)} 
+                    value={board[row][col]} 
+                />);
+            }
+            field.push(<div className="row" key={row}>{rows}</div>);
+        }
+        return field;
     }
 
     return(
         <div className="game">
             <p>{nextTurn ? "Вы ходите первым" : "Вы ходите вторым"}</p>
             <div className="field">
-                {board.map((value, index) =>
-                    <Cell 
-                        key={index} 
-                        onClick={() => handleCellClick(index)} 
-                        value={value} 
-                    />
-                )}
+                {createBoard()}
             </div>
             <button className="button__restart" onClick={restartGame}>Начать заново</button>
             <span>{hasEmptyCells(board) ? '' : 'Игра окончена'}</span>
