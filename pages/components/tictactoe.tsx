@@ -59,14 +59,41 @@ function TicTacToe({data}: Datas) {
 
     // -------------- Методы -------------
 
-    const checkWinner = (): boolean => {
-        let check = true;
+    const checkLines = (): boolean => {
         let flag = "x";
         for(let row = 0; row < 3; row++) {
-            check = check && board[row].every(el => el === flag);
-            if(check) {
+            let rowCheck = true;
+            let colCheck = true;
+            for(let col = 0; col < 3; col++) {
+                rowCheck = rowCheck && (board[row][col] === flag);
+                colCheck = colCheck && (board[col][row] === flag);
+            }
+            
+            if(rowCheck || colCheck) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    const checkDiagonals = (): boolean => {
+        let flag = "x";
+        let toRight = true;
+        let toLeft = true;
+        for(let row = 0; row < 3; row++) {
+            toRight = toRight && (board[row][row] === flag);
+            toLeft = toLeft && (board[2 - row][row] === flag);
+        }
+
+        if(toRight || toLeft) {
+            return true;
+        }
+        return false;
+    }
+
+    const checkWinner = (): boolean => {
+        if(checkLines() || checkDiagonals()) {
+            return true;
         }
         return false;
     }
