@@ -3,7 +3,7 @@ import { boardSlice } from './boardSlice';
 
 export const store = configureStore({
     reducer: {
-        myReducer: boardSlice.reducer,
+        boardReducer: boardSlice.reducer,
     }
 });
 
