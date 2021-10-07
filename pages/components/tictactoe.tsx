@@ -1,19 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Cell from "./cell";
 
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { move, restart } from '../store/boardSlice';
+import { initialState, move, restart } from '../store/boardSlice';
 
 import { Observable } from "rxjs";
 import { Datas } from '../interfaces/interface';
 
 function TicTacToe({data}: Datas) {
+    // Данные о текущем ходе
+    const [currentMoveInfo, setCurrentMoveInfo] = useState({row: 0, col: 0, isPlayer: initialState.nextTurn});
+    
     const board = useAppSelector(state => state.boardReducer.board);
     const nextTurn = useAppSelector(state => state.boardReducer.nextTurn);
     const dispatch = useAppDispatch();
 
-    const setMove = (flag: string, col: number, row: number) => {
-        dispatch({type: move.type, payload: {flag: flag, pos: [col, row]}});
+    const setMove = (flag: string, row: number, col: number) => {
+        dispatch({type: move.type, payload: {flag: flag, row: row, col: col}});
+        setCurrentMoveInfo({row: row, col: col, isPlayer: nextTurn});
     }
     
     // const stream$ = new Observable(observer => {
@@ -34,7 +38,6 @@ function TicTacToe({data}: Datas) {
     // -------------- Эффекты -------------
 
     useEffect(() => {
-        console.log("Проверка победителя");
         if(checkWinner()) {
             console.log("Победитель!");
         }
@@ -43,18 +46,18 @@ function TicTacToe({data}: Datas) {
     // Ход бота
     useEffect(() => {
         if(!nextTurn && hasEmptyCells(board)) {
-            let rand1, rand2;
+            let randRow, randCol;
             do {
-                rand1 = Math.round(random(0, 2));
-                rand2 = Math.round(random(0, 2));
-            } while(board[rand1][rand2] !== '');
-            setMove("o", rand1, rand2);
+                randRow = Math.round(random(0, 2));
+                randCol = Math.round(random(0, 2));
+            } while(board[randRow][randCol] !== '');
+            setMove("o", randRow, randCol);
         }
     }, [nextTurn]);
 
     // Автоматическое сохранение информации о ходе
     useEffect(() => {
-        saveMove();
+        saveMoveInfo();
     }, [board, nextTurn]);
 
     // -------------- Методы -------------
@@ -99,15 +102,16 @@ function TicTacToe({data}: Datas) {
     }
 
     // Cохранение информации о ходе
-    const saveMove = async () => {
+    const saveMoveInfo = async () => {
         const response = await fetch("http://localhost:3000/api/board", {
             method: 'POST',
-            body: JSON.stringify({board, nextTurn}),
+            body: JSON.stringify({currentMoveInfo}),
             headers: {
                 'Content-Type': 'application/json'
             }
         });
         const data = await response.json();
+        console.log(data);
     }
 
     // Вывод случайного числа
@@ -127,8 +131,8 @@ function TicTacToe({data}: Datas) {
 
     // Обработка клика по клетке поля
     const handleCellClick = (row: number, col: number) => { 
-        if(nextTurn && board[col][row] === '') {
-            setMove("x", col, row);
+        if(nextTurn && board[row][col] === '') {
+            setMove("x", row, col);
         }
     }
 
@@ -140,7 +144,7 @@ function TicTacToe({data}: Datas) {
             for(let col = 0; col < 3; col++) {
                 rows.push(<Cell 
                     key={col} 
-                    onClick={() => handleCellClick(col, row)} 
+                    onClick={() => handleCellClick(row, col)} 
                     value={board[row][col]} 
                 />);
             }
@@ -151,7 +155,7 @@ function TicTacToe({data}: Datas) {
 
     return(
         <div className="game">
-            <p>{nextTurn ? "Вы ходите первым" : "Вы ходите вторым"}</p>
+            <p>{initialState.nextTurn ? "Вы ходите первым" : "Вы ходите вторым"}</p>
             <div className="field">
                 {createBoard()}
             </div>
