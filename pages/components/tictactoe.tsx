@@ -15,7 +15,7 @@ function TicTacToe({data}: Datas) {
     const nextTurn = useAppSelector(state => state.boardReducer.nextTurn);
     const dispatch = useAppDispatch();
 
-    const setMove = (flag: string, row: number, col: number) => {
+    const makeMove = (flag: string, row: number, col: number) => {
         dispatch({type: move.type, payload: {flag: flag, row: row, col: col}});
         setCurrentMoveInfo({row: row, col: col, isPlayer: nextTurn});
     }
@@ -51,7 +51,7 @@ function TicTacToe({data}: Datas) {
                 randRow = Math.round(random(0, 2));
                 randCol = Math.round(random(0, 2));
             } while(board[randRow][randCol] !== '');
-            setMove("o", randRow, randCol);
+            makeMove("o", randRow, randCol);
         }
     }, [nextTurn]);
 
@@ -132,7 +132,7 @@ function TicTacToe({data}: Datas) {
     // Обработка клика по клетке поля
     const handleCellClick = (row: number, col: number) => { 
         if(nextTurn && board[row][col] === '') {
-            setMove("x", row, col);
+            makeMove("x", row, col);
         }
     }
 
