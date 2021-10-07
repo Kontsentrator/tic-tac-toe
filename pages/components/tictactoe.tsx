@@ -5,19 +5,20 @@ import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { initialState, move, restart } from '../store/boardSlice';
 
 import { Observable } from "rxjs";
-import { Datas } from '../interfaces/interface';
+import { Datas, IMoveInfo } from '../interfaces/interface';
 
 function TicTacToe({data}: Datas) {
     // Данные о текущем ходе
-    const [currentMoveInfo, setCurrentMoveInfo] = useState({row: 0, col: 0, isPlayer: initialState.nextTurn});
+    const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({game: 0, row: 0, col: 0, isPlayer: initialState.nextTurn});
     
+    const flags = {player: "x", bot: "o"};
     const board = useAppSelector(state => state.boardReducer.board);
     const nextTurn = useAppSelector(state => state.boardReducer.nextTurn);
     const dispatch = useAppDispatch();
 
     const makeMove = (flag: string, row: number, col: number) => {
         dispatch({type: move.type, payload: {flag: flag, row: row, col: col}});
-        setCurrentMoveInfo({row: row, col: col, isPlayer: nextTurn});
+        setCurrentMoveInfo({game: 0, row: row, col: col, isPlayer: nextTurn});
     }
     
     // const stream$ = new Observable(observer => {
@@ -63,7 +64,6 @@ function TicTacToe({data}: Datas) {
     // -------------- Методы -------------
 
     const checkLines = (): boolean => {
-        let flag = "x";
         for(let row = 0; row < 3; row++) {
             let rowCheck = true;
             let colCheck = true;
