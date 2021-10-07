@@ -1,16 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { initialState } from "../store/boardSlice";
-
+import { history } from "../data/history";
 
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const nextTurn = initialState.nextTurn;
   
   if(req.method === 'GET') {
-    const movesInfo = [{ game: 1, row: 1, col: 2, isPlayer: nextTurn }];
-    res.status(200).json(movesInfo);
+    res.status(200).json(history);
   } else if (req.method === 'POST') {
-    const movesInfo = req.body.currentMoveInfo;
-    res.status(201).json(movesInfo);
+    const newMoveInfo = req.body.currentMoveInfo;
+    history.push(newMoveInfo);
+    res.status(201).json(history);
   }
 }
