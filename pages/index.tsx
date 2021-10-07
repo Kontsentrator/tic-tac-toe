@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import TicTacToe from './components/tictactoe';
 import { store } from './store/store';
 import { GetStaticProps } from 'next';
-import { Datas } from './interfaces/interface';
+import { Datas, IMoveInfo } from './interfaces/interface';
 
 export const getStaticProps: GetStaticProps = async ctx => {
   const response = await fetch("http://localhost:3000/api/board");
@@ -11,6 +11,8 @@ export const getStaticProps: GetStaticProps = async ctx => {
   console.log(data);
   return {props: {data}};
 }
+
+const StatisticContext = React.createContext({});
 
 export default function Home({data}: Datas) {
   return (
