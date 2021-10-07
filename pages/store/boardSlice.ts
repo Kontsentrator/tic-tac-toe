@@ -23,7 +23,7 @@ export const boardSlice = createSlice({
         restart: (state) => {
             state.board = initialState.board;
             state.nextTurn = initialState.nextTurn;
-        },
+        }
     }
 });
 
