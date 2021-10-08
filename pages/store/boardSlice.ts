@@ -3,7 +3,6 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 interface IBoardState {
     board: Array<string[]>,
     nextTurn: boolean,
-    isWinner: boolean
 }
 
 export const initialState: IBoardState = {
@@ -11,7 +10,6 @@ export const initialState: IBoardState = {
             ['', '', ''],
             ['', '', '']],
     nextTurn: true,
-    isWinner: false
 }
 
 export const boardSlice = createSlice({
@@ -25,7 +23,6 @@ export const boardSlice = createSlice({
         restart: (state) => {
             state.board = initialState.board;
             state.nextTurn = initialState.nextTurn;
-            state.isWinner = initialState.isWinner;
         }
     }
 });
