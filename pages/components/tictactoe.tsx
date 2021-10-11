@@ -131,7 +131,7 @@ function TicTacToe({data}: Datas) {
     }
 
     // Обработка клика по клетке поля
-    const handleCellClick = (row: number, col: number) => { 
+    const handleCellClick = (row: number, col: number) => {
         if(nextTurn && board[row][col] === '') {
             makeMove(flags.player, row, col);
         }
