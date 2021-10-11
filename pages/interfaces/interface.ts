@@ -1,16 +1,16 @@
 export interface IStaticProps {
-    id: number,
-    status: string
+  id: number;
+  status: string;
 }
-  
+
 export interface Datas {
-    data: IStaticProps[]
+  data: IStaticProps[];
 }
 
 // Статистика по игре
 export interface IMoveInfo {
-    game: number,
-    row: number,
-    col: number,
-    isPlayer: boolean
+  game: number;
+  row: number;
+  col: number;
+  isPlayer: boolean;
 }
