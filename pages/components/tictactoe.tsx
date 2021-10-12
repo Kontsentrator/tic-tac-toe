@@ -2,29 +2,31 @@ import React, { useEffect, useState } from "react";
 import Cell from "./cell";
 
 import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { initialState, move, restart } from '../store/boardSlice';
+import { initialState, move, restart, setWinner } from '../store/boardSlice';
 
 import { Observable } from "rxjs";
-import { Datas, IMoveInfo } from '../interfaces/interface';
+import { Datas, IMoveInfo } from '../interfaces/interface';;
 
 function TicTacToe({data}: Datas) {
     // Данные о текущем ходе
     const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({game: 0, row: 0, col: 0, isPlayer: initialState.nextTurn});
-    const [winner, setWinner] = useState<string>('');
+
     // Метки полей
     const flags = {player: "x", bot: "o"};
-    const rowsNum = useAppSelector(state => state.boardReducer.board.length);
-    const colsNum = 3;
-    
+
     const board = useAppSelector(state => state.boardReducer.board);
     const nextTurn = useAppSelector(state => state.boardReducer.nextTurn);
+    const rowsNum = useAppSelector(state => state.boardReducer.boardSize.rowsNum);
+    const colsNum = useAppSelector(state => state.boardReducer.boardSize.colsNum);
+    const winner = useAppSelector(state => state.boardReducer.winner);
+
     const dispatch = useAppDispatch();
 
     const makeMove = (flag: string, row: number, col: number) => {
         dispatch({type: move.type, payload: {flag: flag, row: row, col: col}});
         setCurrentMoveInfo({game: 0, row: row, col: col, isPlayer: nextTurn});
     }
-    
+
     // const stream$ = new Observable(observer => {
     //     observer.next(board);
     // });
@@ -46,19 +48,21 @@ function TicTacToe({data}: Datas) {
     useEffect(() => {
         let flag = nextTurn ? flags.bot : flags.player;
         if(checkWinner(flag)) {
-            setWinner(flag);
+            dispatch({type: setWinner.type, payload: flag});
         }
     }, [board, nextTurn])
 
     // Ход бота
     useEffect(() => {
-        if(!nextTurn && hasEmptyCells(board) && !winner) {
-            let randRow, randCol;
-            do {
-                randRow = Math.round(random(0, 2));
-                randCol = Math.round(random(0, 2));
-            } while(board[randRow][randCol] !== '');
-            makeMove(flags.bot, randRow, randCol);
+        if(!winner) {
+            if(!nextTurn && hasEmptyCells(board)) {
+                let randRow, randCol;
+                do {
+                    randRow = Math.round(random(0, rowsNum - 1));
+                    randCol = Math.round(random(0, colsNum - 1));
+                } while(board[randRow][randCol] !== '');
+                makeMove(flags.bot, randRow, randCol);
+            }
         }
     }, [nextTurn]);
 
@@ -100,7 +104,7 @@ function TicTacToe({data}: Datas) {
     }
 
     const checkWinner = (flag: string): boolean => {
-        if(checkLines(flag) || checkDiagonals(flag)) {
+        if((checkLines(flag) || checkDiagonals(flag)) && !winner) {
             return true;
         }
         return false;
@@ -136,8 +140,10 @@ function TicTacToe({data}: Datas) {
 
     // Обработка клика по клетке поля
     const handleCellClick = (row: number, col: number) => {
-        if(nextTurn && board[row][col] === '') {
-            makeMove(flags.player, row, col);
+        if(!winner) {
+            if(nextTurn && board[row][col] === '') {
+                makeMove(flags.player, row, col);
+            }
         }
     }
 
