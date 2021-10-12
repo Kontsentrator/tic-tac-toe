@@ -5,12 +5,13 @@ interface IBoardState {
   nextTurn: boolean;
 }
 
+export const boardSizeState = {
+  rowsNum: 4,
+  colsNum: 3
+};
+
 export const initialState: IBoardState = {
-  board: [
-    ["", "", ""],
-    ["", "", ""],
-    ["", "", ""],
-  ],
+  board: Array(boardSizeState.rowsNum).fill(Array(boardSizeState.colsNum).fill('')),
   nextTurn: true,
 };
 
