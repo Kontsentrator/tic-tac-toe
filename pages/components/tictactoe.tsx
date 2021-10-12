@@ -10,9 +10,12 @@ import { Datas, IMoveInfo } from '../interfaces/interface';
 function TicTacToe({data}: Datas) {
     // Данные о текущем ходе
     const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({game: 0, row: 0, col: 0, isPlayer: initialState.nextTurn});
-    const [isWinner, setIsWinner] = useState<boolean>(false);
+    const [winner, setWinner] = useState<string>('');
     // Метки полей
     const flags = {player: "x", bot: "o"};
+    const rowsNum = useAppSelector(state => state.boardReducer.board.length);
+    const colsNum = 3;
+    
     const board = useAppSelector(state => state.boardReducer.board);
     const nextTurn = useAppSelector(state => state.boardReducer.nextTurn);
     const dispatch = useAppDispatch();
@@ -43,13 +46,13 @@ function TicTacToe({data}: Datas) {
     useEffect(() => {
         let flag = nextTurn ? flags.bot : flags.player;
         if(checkWinner(flag)) {
-            setIsWinner(true);
+            setWinner(flag);
         }
     }, [board, nextTurn])
 
     // Ход бота
     useEffect(() => {
-        if(!nextTurn && hasEmptyCells(board)) {
+        if(!nextTurn && hasEmptyCells(board) && !winner) {
             let randRow, randCol;
             do {
                 randRow = Math.round(random(0, 2));
@@ -67,10 +70,10 @@ function TicTacToe({data}: Datas) {
     // -------------- Методы -------------
 
     const checkLines = (flag: string): boolean => {
-        for(let row = 0; row < 3; row++) {
-            let rowCheck;
+        for(let row = 0; row < rowsNum; row++) {
+            let rowCheck = true;
             let colCheck = true;
-            for(let col = 0; col < 3; col++) {
+            for(let col = 0; col < colsNum; col++) {
                 rowCheck &&= (board[row][col] === flag);
                 colCheck &&= (board[col][row] === flag);
             }
@@ -85,9 +88,9 @@ function TicTacToe({data}: Datas) {
     const checkDiagonals = (flag: string): boolean => {
         let toRight = true;
         let toLeft = true;
-        for(let row = 0; row < 3; row++) {
+        for(let row = 0; row < rowsNum; row++) {
             toRight &&= (board[row][row] === flag);
-            toLeft &&= (board[2 - row][row] === flag);
+            toLeft &&= (board[rowsNum - 1 - row][row] === flag);
         }
 
         if(toRight || toLeft) {
@@ -128,6 +131,7 @@ function TicTacToe({data}: Datas) {
     // Перезапуск игры
     const restartGame = () => {
         dispatch({type: restart.type});
+        setWinner('');
     }
 
     // Обработка клика по клетке поля
@@ -140,9 +144,9 @@ function TicTacToe({data}: Datas) {
     // Создание поля для игры
     const createBoard = () => {
         let field = [];
-        for(let row = 0; row < 3; row++) {
+        for(let row = 0; row < rowsNum; row++) {
             let rows = [];
-            for(let col = 0; col < 3; col++) {
+            for(let col = 0; col < colsNum; col++) {
                 rows.push(<Cell 
                     key={col} 
                     onClick={() => handleCellClick(row, col)} 
@@ -163,7 +167,7 @@ function TicTacToe({data}: Datas) {
             
             <button className="button__restart" onClick={restartGame}>Начать заново</button>
             <span>{
-                isWinner ? "Победитель" : ""
+                winner == flags.bot ? "Проигрыш" : (winner == flags.player ? "Победа" : "") 
             }</span>
             <button onClick={() => console.log(data)}>Инфо</button>
         </div>
