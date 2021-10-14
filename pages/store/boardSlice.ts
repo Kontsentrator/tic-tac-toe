@@ -12,17 +12,17 @@ interface IBoardState {
   winner: string,
 }
 
-const boardSizeState: IBoardSize = {
+const initBoardSize: IBoardSize = {
   rowsNum: 3,
   colsNum: 3,
 }
 
 export const initialState: IBoardState = {
-  board: Array(boardSizeState.rowsNum).fill(Array(boardSizeState.colsNum).fill('')),
+  board: Array(initBoardSize.rowsNum).fill(Array(initBoardSize.colsNum).fill('')),
   nextTurn: true,
   boardSize: {
-    rowsNum: boardSizeState.rowsNum,
-    colsNum: boardSizeState.colsNum,
+    rowsNum: initBoardSize.rowsNum,
+    colsNum: initBoardSize.colsNum,
   },
   winner: "",
 };
