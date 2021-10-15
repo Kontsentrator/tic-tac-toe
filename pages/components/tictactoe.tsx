@@ -39,28 +39,28 @@ function TicTacToe({ data }: Datas) {
   // -------------- Эффекты -------------
 
   // Проверка победителя
-  useEffect(() => {
-    let flag = nextTurn ? flags.bot : flags.player;
-    console.log("Проверка");
-    if(checkWinner(flag)) {
-      dispatch({ type: setWinner.type, payload: flag });
-      console.log("Winner в useEffect", winner);
-    }
-  }, [board, nextTurn]);
+  // useEffect(() => {
+  //   let flag = nextTurn ? flags.bot : flags.player;
+  //   console.log("Проверка");
+  //   if(checkWinner(flag)) {
+  //     dispatch({ type: setWinner.type, payload: flag });
+  //     console.log("Winner в useEffect", winner);
+  //   }
+  // }, [board, nextTurn]);
 
   // Ход бота
-  useEffect(() => {
-    if (!winner) {
-      if (!nextTurn && hasEmptyCells(board)) {
-        let randRow, randCol;
-        do {
-          randRow = Math.round(random(0, rowsNum - 1));
-          randCol = Math.round(random(0, colsNum - 1));
-        } while (board[randRow][randCol] !== "");
-        makeMove(flags.bot, randRow, randCol);
-      }
-    }
-  }, [nextTurn]);
+  // useEffect(() => {
+  //   if (!winner) {
+  //     if (!nextTurn && hasEmptyCells(board)) {
+  //       let randRow, randCol;
+  //       do {
+  //         randRow = Math.round(random(0, rowsNum - 1));
+  //         randCol = Math.round(random(0, colsNum - 1));
+  //       } while (board[randRow][randCol] !== "");
+  //       makeMove(flags.bot, randRow, randCol);
+  //     }
+  //   }
+  // }, [nextTurn]);
 
   // Автоматическое сохранение информации о ходе
   useEffect(() => {
@@ -110,7 +110,7 @@ function TicTacToe({ data }: Datas) {
   };
 
   const botMove = () => {
-    if(!nextTurn && hasEmptyCells(board) && !winner) {
+    if(!nextTurn && hasEmptyCells(board)) {
       let randRow, randCol;
       do {
         randRow = Math.round(random(0, rowsNum - 1));
@@ -182,9 +182,17 @@ function TicTacToe({ data }: Datas) {
   });
   stream$.subscribe(
       () => {
-        if(!winner) {
-          //botMove();
+        let tempWinner = winner;
+        if(checkWinner(flags.player)) {
+          tempWinner = flags.player;
         }
+        if(!tempWinner) {
+          botMove();
+        }
+        if(checkWinner(flags.bot)) {
+          tempWinner = flags.bot;
+        }
+        dispatch({ type: setWinner.type, payload: tempWinner });
       },
   );
 
