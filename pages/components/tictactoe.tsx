@@ -36,6 +36,39 @@ function TicTacToe({ data }: Datas) {
     setCurrentMoveInfo({ game: 0, row: row, col: col, isPlayer: nextTurn });
   };
 
+  // -------------- Эффекты -------------
+
+  // Проверка победителя
+  useEffect(() => {
+    let flag = nextTurn ? flags.bot : flags.player;
+    console.log("Проверка");
+    if(checkWinner(flag)) {
+      dispatch({ type: setWinner.type, payload: flag });
+      console.log("Winner в useEffect", winner);
+    }
+  }, [board, nextTurn]);
+
+  // Ход бота
+  useEffect(() => {
+    if (!winner) {
+      if (!nextTurn && hasEmptyCells(board)) {
+        let randRow, randCol;
+        do {
+          randRow = Math.round(random(0, rowsNum - 1));
+          randCol = Math.round(random(0, colsNum - 1));
+        } while (board[randRow][randCol] !== "");
+        makeMove(flags.bot, randRow, randCol);
+      }
+    }
+  }, [nextTurn]);
+
+  // Автоматическое сохранение информации о ходе
+  useEffect(() => {
+    saveMoveInfo();
+  }, [board, nextTurn]);
+
+  // -------------- Методы -------------
+
   // Проверка, что на поле остались пустые клетки
   const hasEmptyCells = (array: string[][]): boolean => {
     return !array.every((row) => row.every((el) => el !== ""));
@@ -76,6 +109,26 @@ function TicTacToe({ data }: Datas) {
     return false;
   };
 
+  const botMove = () => {
+    if(!nextTurn && hasEmptyCells(board) && !winner) {
+      let randRow, randCol;
+      do {
+        randRow = Math.round(random(0, rowsNum - 1));
+        randCol = Math.round(random(0, colsNum - 1));
+      } while (board[randRow][randCol] !== "");
+      makeMove(flags.bot, randRow, randCol);
+    }
+  };
+
+  // Обработка клика по клетке поля
+  const handleCellClick = (row: number, col: number) => {
+    if (!winner) {
+      if (nextTurn && board[row][col] === "") {
+        makeMove(flags.player, row, col);
+      }
+    }
+  };
+
   const checkWinner = (flag: string) => {
     if ((checkLines(flag) || checkDiagonals(flag)) && !winner) {
       return true;
@@ -83,61 +136,6 @@ function TicTacToe({ data }: Datas) {
 
     return false;
   };
-
-  const stream$ = new Observable(observer => {
-      observer.next(board);
-  });
-  stream$.subscribe(
-      () => {
-        if(checkWinner("x")) {
-            dispatch({ type: setWinner.type, payload: "x" });
-        }
-        if (!nextTurn && hasEmptyCells(board)) {
-            let randRow, randCol;
-            do {
-              randRow = Math.round(random(0, rowsNum - 1));
-              randCol = Math.round(random(0, colsNum - 1));
-            } while (board[randRow][randCol] !== "");
-            makeMove(flags.bot, randRow, randCol);
-        }
-        if(checkWinner("o")) {
-            dispatch({ type: setWinner.type, payload: "o" });
-        }
-      },
-  );
-
-  // -------------- Эффекты -------------
-
-  // Проверка победителя
-  useEffect(() => {
-    let flag = nextTurn ? flags.bot : flags.player;
-    if(checkWinner(flag)) {
-      dispatch({ type: setWinner.type, payload: flag });
-    }
-  }, [board, nextTurn]);
-
-  // Ход бота
-//   useEffect(() => {
-//     if (!winner) {
-//       if (!nextTurn && hasEmptyCells(board)) {
-//         let randRow, randCol;
-//         do {
-//           randRow = Math.round(random(0, rowsNum - 1));
-//           randCol = Math.round(random(0, colsNum - 1));
-//         } while (board[randRow][randCol] !== "");
-//         makeMove(flags.bot, randRow, randCol);
-//       }
-//     }
-//   }, [nextTurn]);
-
-  // Автоматическое сохранение информации о ходе
-  useEffect(() => {
-    saveMoveInfo();
-  }, [board, nextTurn]);
-
-  // -------------- Методы -------------
-
-
 
   // Cохранение информации о ходе
   const saveMoveInfo = async () => {
@@ -151,22 +149,9 @@ function TicTacToe({ data }: Datas) {
     const data = await response.json();
   };
 
-  
-
-  
-
   // Перезапуск игры
   const restartGame = () => {
     dispatch({ type: restart.type });
-  };
-
-  // Обработка клика по клетке поля
-  const handleCellClick = (row: number, col: number) => {
-    if (!winner) {
-      if (nextTurn && board[row][col] === "") {
-        makeMove(flags.player, row, col);
-      }
-    }
   };
 
   // Создание поля для игры
@@ -191,6 +176,18 @@ function TicTacToe({ data }: Datas) {
     }
     return field;
   };
+
+  const stream$ = new Observable(observer => {
+    observer.next(handleCellClick);
+  });
+  stream$.subscribe(
+      () => {
+        if(!winner) {
+          //botMove();
+        }
+      },
+  );
+
 
   return (
     <div className="game">
