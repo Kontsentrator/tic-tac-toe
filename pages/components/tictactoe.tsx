@@ -5,9 +5,9 @@ import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { initialState, move, restart, setWinner } from "../store/boardSlice";
 
 import { Observable } from "rxjs";
-import { Datas, IMoveInfo } from "../interfaces/interface";
+import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
 
-function TicTacToe({ data }: Datas) {
+function TicTacToe({ data }: IMovesInfo) {
   // Данные о текущем ходе
   const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({
     game: 0,
