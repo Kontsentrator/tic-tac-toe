@@ -1,24 +1,26 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface IBoardSize {
-  rowsNum: number,
-  colsNum: number,
+  rowsNum: number;
+  colsNum: number;
 }
 
 interface IBoardState {
-  board: Array<string[]>,
-  nextTurn: boolean,
-  boardSize: IBoardSize,
-  winner: string,
+  board: Array<string[]>;
+  nextTurn: boolean;
+  boardSize: IBoardSize;
+  winner: string;
 }
 
 const initBoardSize: IBoardSize = {
   rowsNum: 3,
   colsNum: 3,
-}
+};
 
 export const initialState: IBoardState = {
-  board: Array(initBoardSize.rowsNum).fill(Array(initBoardSize.colsNum).fill('')),
+  board: Array(initBoardSize.rowsNum).fill(
+    Array(initBoardSize.colsNum).fill("")
+  ),
   nextTurn: true,
   boardSize: {
     rowsNum: initBoardSize.rowsNum,
@@ -45,7 +47,7 @@ export const boardSlice = createSlice({
     },
     setWinner: (state, action: PayloadAction<string>) => {
       state.winner = action.payload;
-    }
+    },
   },
 });
 
