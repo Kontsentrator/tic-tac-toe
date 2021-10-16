@@ -10,6 +10,7 @@ interface IBoardState {
   nextTurn: boolean;
   boardSize: IBoardSize;
   winner: string;
+  gameNum: number;
 }
 
 const initBoardSize: IBoardSize = {
@@ -27,6 +28,7 @@ export const initialState: IBoardState = {
     colsNum: initBoardSize.colsNum,
   },
   winner: "",
+  gameNum: 1,
 };
 
 export const boardSlice = createSlice({
@@ -44,6 +46,7 @@ export const boardSlice = createSlice({
       state.board = initialState.board;
       state.nextTurn = initialState.nextTurn;
       state.winner = initialState.winner;
+      state.gameNum++;
     },
     setWinner: (state, action: PayloadAction<string>) => {
       state.winner = action.payload;
