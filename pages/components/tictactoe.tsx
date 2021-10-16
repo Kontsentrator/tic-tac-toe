@@ -10,7 +10,7 @@ import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
 function TicTacToe({ data }: IMovesInfo) {
   // Данные о текущем ходе
   const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({
-    game: 0,
+    game: initialState.gameNum,
     row: 0,
     col: 0,
     isPlayer: initialState.nextTurn,
@@ -27,6 +27,9 @@ function TicTacToe({ data }: IMovesInfo) {
   );
   const colsNum = useAppSelector(
     (state) => state.boardReducer.boardSize.colsNum
+  );
+  const gameNum = useAppSelector(
+    (state) => state.boardReducer.gameNum
   );
 
   const dispatch = useAppDispatch();
@@ -147,6 +150,7 @@ function TicTacToe({ data }: IMovesInfo) {
       },
     });
     const data = await response.json();
+    console.log(data);
   };
 
   // Перезапуск игры
@@ -200,6 +204,7 @@ function TicTacToe({ data }: IMovesInfo) {
   return (
     <div className="game">
       <p>{initialState.nextTurn ? "Вы ходите первым" : "Вы ходите вторым"}</p>
+      <p>Игра №{gameNum}</p>
       <div className="field">{createBoard()}</div>
 
       <button className="button__restart" onClick={restartGame}>
