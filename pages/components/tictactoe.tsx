@@ -4,7 +4,7 @@ import Cell from "./cell";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { initialState, move, restart, setWinner } from "../store/boardSlice";
 
-import { Observable } from "rxjs";
+import { Observable, fromEvent } from "rxjs";
 import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
 
 function TicTacToe({ data }: IMovesInfo) {
@@ -66,9 +66,7 @@ function TicTacToe({ data }: IMovesInfo) {
   // }, [nextTurn]);
 
   // Автоматическое сохранение информации о ходе
-  useEffect(() => {
-    saveMoveInfo();
-  }, [board, nextTurn]);
+
 
   // -------------- Методы -------------
 
@@ -186,13 +184,16 @@ function TicTacToe({ data }: IMovesInfo) {
   });
   stream$.subscribe(
       () => {
+        console.log("После хода")
         let tempWinner = winner;
+        console.log("Проверка игрока")
         if(checkWinner(flags.player)) {
           tempWinner = flags.player;
         }
         if(!tempWinner) {
           botMove();
         }
+        console.log("Проверка бота")
         if(checkWinner(flags.bot)) {
           tempWinner = flags.bot;
         }
