@@ -180,20 +180,20 @@ function TicTacToe({ moves }: IMovesInfo) {
   };
 
   const stream$ = new Observable(observer => {
-    observer.next(handleCellClick);
+    observer.next();
   });
   stream$.subscribe(
       () => {
         console.log("После хода")
         let tempWinner = winner;
-        console.log("Проверка игрока")
+        console.log("Проверка игрока");
         if(checkWinner(flags.player)) {
           tempWinner = flags.player;
         }
         if(!tempWinner) {
           botMove();
         }
-        console.log("Проверка бота")
+        console.log("Проверка бота");
         if(checkWinner(flags.bot)) {
           tempWinner = flags.bot;
         }
