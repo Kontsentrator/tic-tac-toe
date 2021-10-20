@@ -7,7 +7,7 @@ import { initialState, move, restart, setWinner } from "../store/boardSlice";
 import { Observable, fromEvent } from "rxjs";
 import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
 
-function TicTacToe({ data }: IMovesInfo) {
+function TicTacToe({ moves }: IMovesInfo) {
   // Данные о текущем ходе
   const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({
     game: initialState.gameNum,
@@ -218,7 +218,7 @@ function TicTacToe({ data }: IMovesInfo) {
           ? "Победа"
           : ""}
       </span>
-      <button onClick={() => console.log(data)}>Инфо</button>
+      <button onClick={() => console.log(moves)}>Инфо</button>
     </div>
   );
 }
