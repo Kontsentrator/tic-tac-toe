@@ -1,3 +1,3 @@
-import { IMoveInfo } from "../interfaces/interface";
+import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
 
-export const history: IMoveInfo[] = [];
+export const history: IMovesInfo[] = [];
