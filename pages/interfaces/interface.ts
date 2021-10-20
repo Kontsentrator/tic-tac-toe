@@ -7,5 +7,5 @@ export interface IMoveInfo {
 }
 
 export interface IMovesInfo {
-  data: IMoveInfo[]
+  moves: IMoveInfo[]
 }
