@@ -5,11 +5,13 @@ import { store } from "./store/store";
 import { GetStaticProps } from "next";
 import { IMovesInfo } from "./interfaces/interface";
 
-
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const moves = await fetch("http://localhost:3000/api/boad").then(
-    res => res.json()
-  ).catch(error => {console.log(error); return [];});
+  const moves = await fetch("http://localhost:3000/api/boad")
+    .then((res) => res.json())
+    .catch((error) => {
+      console.log(error);
+      return [];
+    });
   return { props: { moves } };
 };
 
