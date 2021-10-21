@@ -1,17 +1,19 @@
-import React from "react";
+import React, { memo } from "react";
 
 type CellProps = {
-    value: string,
-    onClick(): void
-}
+  value: string;
+  row: number;
+  col: number;
+  onClick(row: number, col: number): void;
+};
 
-const Cell: React.FC<CellProps> = ({value, onClick}) => {
-    console.log();
-    return(
-        <div className="cell" onClick={onClick}>
-            {value}
-        </div>
-    );
-}
+const Cell: React.FC<CellProps> = ({ value, row, col, onClick }) => {
+  console.log(row, col);
+  return (
+    <div className="cell" onClick={() => onClick(row, col)}>
+      {value}
+    </div>
+  );
+};
 
 export default Cell;
