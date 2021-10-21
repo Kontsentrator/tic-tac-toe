@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import Cell from "./cell";
+import React, { useCallback, useEffect, useState } from "react";
+import Board from "./board";
 
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { initialState, move, restart, setWinner } from "../store/boardSlice";
@@ -156,29 +156,6 @@ function TicTacToe({ moves }: IMovesInfo) {
     dispatch({ type: restart.type });
   };
 
-  // Создание поля для игры
-  const createBoard = () => {
-    let field = [];
-    for (let row = 0; row < rowsNum; row++) {
-      let rows = [];
-      for (let col = 0; col < colsNum; col++) {
-        rows.push(
-          <Cell
-            key={col}
-            onClick={() => handleCellClick(row, col)}
-            value={board[row][col]}
-          />
-        );
-      }
-      field.push(
-        <div className="row" key={row}>
-          {rows}
-        </div>
-      );
-    }
-    return field;
-  };
-
   const stream$ = new Observable(observer => {
     observer.next();
   });
@@ -206,7 +183,9 @@ function TicTacToe({ moves }: IMovesInfo) {
     <div className="game">
       <p>{initialState.nextTurn ? "Вы ходите первым" : "Вы ходите вторым"}</p>
       <p>Игра №{gameNum}</p>
-      <div className="field">{createBoard()}</div>
+      <div className="board">
+        <Board board={board} onClick={handleCellClick} />
+      </div>
 
       <button className="button__restart" onClick={restartGame}>
         Начать заново
@@ -215,8 +194,8 @@ function TicTacToe({ moves }: IMovesInfo) {
         {winner == flags.bot
           ? "Проигрыш"
           : winner == flags.player
-          ? "Победа"
-          : ""}
+          ?? "Победа"
+        }
       </span>
       <button onClick={() => console.log(moves)}>Инфо</button>
     </div>
