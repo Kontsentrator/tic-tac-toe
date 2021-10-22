@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import Board from "./board";
 
 import { useAppSelector, useAppDispatch } from "../store/hooks";
@@ -35,6 +35,7 @@ function TicTacToe({ moves }: IMovesInfo) {
   const makeMove = (flag: string, row: number, col: number) => {
     dispatch({ type: move.type, payload: { flag: flag, row: row, col: col } });
     setCurrentMoveInfo({ game: 0, row: row, col: col, isPlayer: nextTurn });
+    saveMoveInfo(currentMoveInfo);
   };
 
   // -------------- Эффекты -------------
@@ -119,27 +120,26 @@ function TicTacToe({ moves }: IMovesInfo) {
   };
 
   // Обработка клика по клетке поля
-  const handleCellClick = (row: number, col: number) => {
+  const handleCellClick = useCallback((row: number, col: number) => {
     if (!winner) {
       if (nextTurn && board[row][col] === "") {
         makeMove(flags.player, row, col);
       }
     }
-  };
+  }, [winner, nextTurn, board]);
 
   const checkWinner = (flag: string) => {
     if ((checkLines(flag) || checkDiagonals(flag)) && !winner) {
       return true;
     }
-
     return false;
   };
 
   // Cохранение информации о ходе
-  const saveMoveInfo = async () => {
+  const saveMoveInfo = async (moveInfo: IMoveInfo) => {
     const response = await fetch("http://localhost:3000/api/board", {
       method: "POST",
-      body: JSON.stringify({ currentMoveInfo }),
+      body: JSON.stringify({ moveInfo }),
       headers: {
         "Content-Type": "application/json",
       },
@@ -152,6 +152,12 @@ function TicTacToe({ moves }: IMovesInfo) {
   const restartGame = () => {
     dispatch({ type: restart.type });
   };
+
+  // const cell = document.getElementsByClassName("cell");
+  // const cellClick$ = fromEvent(cell, "click");
+  // cellClick$.subscribe(
+  //   x => console.log(x)
+  // );
 
   const stream$ = new Observable((observer) => {
     observer.next();
@@ -188,12 +194,11 @@ function TicTacToe({ moves }: IMovesInfo) {
         {winner == flags.bot
           ? "Проигрыш"
           : winner == flags.player
-          ? "Победа"
-          : ""}
+          && "Победа"}
       </span>
       <button onClick={() => console.log(moves)}>Инфо</button>
     </div>
   );
 }
 
-export default TicTacToe;
+export default memo(TicTacToe);
