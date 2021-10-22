@@ -28,9 +28,7 @@ function TicTacToe({ moves }: IMovesInfo) {
   const colsNum = useAppSelector(
     (state) => state.boardReducer.boardSize.colsNum
   );
-  const gameNum = useAppSelector(
-    (state) => state.boardReducer.gameNum
-  );
+  const gameNum = useAppSelector((state) => state.boardReducer.gameNum);
 
   const dispatch = useAppDispatch();
 
@@ -66,7 +64,6 @@ function TicTacToe({ moves }: IMovesInfo) {
   // }, [nextTurn]);
 
   // Автоматическое сохранение информации о ходе
-
 
   // -------------- Методы -------------
 
@@ -111,7 +108,7 @@ function TicTacToe({ moves }: IMovesInfo) {
   };
 
   const botMove = () => {
-    if(!nextTurn && hasEmptyCells(board)) {
+    if (!nextTurn && hasEmptyCells(board)) {
       let randRow, randCol;
       do {
         randRow = Math.round(random(0, rowsNum - 1));
@@ -156,28 +153,25 @@ function TicTacToe({ moves }: IMovesInfo) {
     dispatch({ type: restart.type });
   };
 
-  const stream$ = new Observable(observer => {
+  const stream$ = new Observable((observer) => {
     observer.next();
   });
-  stream$.subscribe(
-      () => {
-        console.log("После хода")
-        let tempWinner = winner;
-        console.log("Проверка игрока");
-        if(checkWinner(flags.player)) {
-          tempWinner = flags.player;
-        }
-        if(!tempWinner) {
-          botMove();
-        }
-        console.log("Проверка бота");
-        if(checkWinner(flags.bot)) {
-          tempWinner = flags.bot;
-        }
-        dispatch({ type: setWinner.type, payload: tempWinner });
-      },
-  );
-
+  stream$.subscribe(() => {
+    console.log("После хода");
+    let tempWinner = winner;
+    console.log("Проверка игрока");
+    if (checkWinner(flags.player)) {
+      tempWinner = flags.player;
+    }
+    if (!tempWinner) {
+      botMove();
+    }
+    console.log("Проверка бота");
+    if (checkWinner(flags.bot)) {
+      tempWinner = flags.bot;
+    }
+    dispatch({ type: setWinner.type, payload: tempWinner });
+  });
 
   return (
     <div className="game">
@@ -194,8 +188,8 @@ function TicTacToe({ moves }: IMovesInfo) {
         {winner == flags.bot
           ? "Проигрыш"
           : winner == flags.player
-          ?? "Победа"
-        }
+          ? "Победа"
+          : ""}
       </span>
       <button onClick={() => console.log(moves)}>Инфо</button>
     </div>
