@@ -26,4 +26,4 @@ const Board: React.FC<BoardProps> = ({ board, onClick }) => {
   );
 };
 
-export default Board;
+export default memo(Board);
