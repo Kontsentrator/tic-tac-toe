@@ -8,7 +8,6 @@ type CellProps = {
 };
 
 const Cell: React.FC<CellProps> = ({ value, row, col, onClick }) => {
-  console.log(row, col);
   return (
     <div className="cell" onClick={() => onClick(row, col)}>
       {value}
@@ -16,4 +15,4 @@ const Cell: React.FC<CellProps> = ({ value, row, col, onClick }) => {
   );
 };
 
-export default Cell;
+export default memo(Cell);
