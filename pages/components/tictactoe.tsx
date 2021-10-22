@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
-import Board from "./board";
+import Cell from "./cell";
 
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { initialState, move, restart, setWinner } from "../store/boardSlice";
@@ -153,38 +153,49 @@ function TicTacToe({ moves }: IMovesInfo) {
     dispatch({ type: restart.type });
   };
 
-  // const cell = document.getElementsByClassName("cell");
-  // const cellClick$ = fromEvent(cell, "click");
-  // cellClick$.subscribe(
-  //   x => console.log(x)
-  // );
+  const cellClick$ = fromEvent(document, "click");
+  cellClick$.subscribe(
+    x => console.log(x)
+  );
 
-  const stream$ = new Observable((observer) => {
-    observer.next();
-  });
-  stream$.subscribe(() => {
-    console.log("После хода");
-    let tempWinner = winner;
-    console.log("Проверка игрока");
-    if (checkWinner(flags.player)) {
-      tempWinner = flags.player;
-    }
-    if (!tempWinner) {
-      botMove();
-    }
-    console.log("Проверка бота");
-    if (checkWinner(flags.bot)) {
-      tempWinner = flags.bot;
-    }
-    dispatch({ type: setWinner.type, payload: tempWinner });
-  });
+  // const stream$ = new Observable((observer) => {
+  //   observer.next();
+  // });
+  // stream$.subscribe(() => {
+  //   console.log("После хода");
+  //   let tempWinner = winner;
+  //   console.log("Проверка игрока");
+  //   if (checkWinner(flags.player)) {
+  //     tempWinner = flags.player;
+  //   }
+  //   if (!tempWinner) {
+  //     botMove();
+  //   }
+  //   console.log("Проверка бота");
+  //   if (checkWinner(flags.bot)) {
+  //     tempWinner = flags.bot;
+  //   }
+  //   dispatch({ type: setWinner.type, payload: tempWinner });
+  // });
 
   return (
     <div className="game">
       <p>{initialState.nextTurn ? "Вы ходите первым" : "Вы ходите вторым"}</p>
       <p>Игра №{gameNum}</p>
       <div className="board">
-        <Board board={board} onClick={handleCellClick} />
+        {board.map((row, rowNum) => (
+          <div className="row" key={rowNum}>
+            {row.map((col, colNum) => (
+              <Cell
+                key={colNum}
+                row={rowNum}
+                col={colNum}
+                onClick={handleCellClick}
+                value={col}
+              />
+            ))}
+          </div>
+        ))}
       </div>
 
       <button className="button__restart" onClick={restartGame}>
