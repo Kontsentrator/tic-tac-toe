@@ -109,7 +109,7 @@ function TicTacToe({ moves }: IMovesInfo) {
   };
 
   const botMove = () => {
-    if (!nextTurn && hasEmptyCells(board)) {
+    if (hasEmptyCells(board)) {
       let randRow, randCol;
       do {
         randRow = Math.round(random(0, rowsNum - 1));
@@ -123,7 +123,8 @@ function TicTacToe({ moves }: IMovesInfo) {
   const handleCellClick = useCallback(
     (row: number, col: number) => {
       if (!winner) {
-        if (nextTurn && !board[row][col]) {
+        if (!board[row][col]) {
+          console.log("Ход игрока")
           makeMove(flags.player, row, col);
         }
       }
@@ -160,14 +161,21 @@ function TicTacToe({ moves }: IMovesInfo) {
     const cellClick$ = fromEvent(
       document.getElementsByClassName("cell"),
       "click"
-    ).subscribe(() => {
-      console.log(nextTurn);
-      botMove();
+    ).subscribe(() => {    
+      console.log("Подписка")    
+      if (hasEmptyCells(board)) {
+        let randRow, randCol;
+        do {
+          randRow = Math.round(random(0, rowsNum - 1));
+          randCol = Math.round(random(0, colsNum - 1));
+        } while (board[randRow][randCol] !== "");
+        makeMove(flags.bot, randRow, randCol);
+      }
     });
 
     return () => {
       cellClick$.unsubscribe();
-    };
+    }
   }, [nextTurn]);
 
   // const stream$ = new Observable((observer) => {
