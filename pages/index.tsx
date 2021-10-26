@@ -6,7 +6,7 @@ import { GetStaticProps } from "next";
 import { IMovesInfo } from "./interfaces/interface";
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const moves = await fetch("http://localhost:3000/api/boad")
+  const moves = await fetch("http://localhost:3000/api/board")
     .then((res) => res.json())
     .catch((error) => {
       console.log(error);
