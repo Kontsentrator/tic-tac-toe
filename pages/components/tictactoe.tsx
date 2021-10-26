@@ -4,7 +4,7 @@ import Cell from "./cell";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { initialState, move, restart, setWinner } from "../store/boardSlice";
 
-import { Observable, fromEvent } from "rxjs";
+import { Observable, fromEvent, delay } from "rxjs";
 import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
 
 function TicTacToe({ moves }: IMovesInfo) {
@@ -120,13 +120,16 @@ function TicTacToe({ moves }: IMovesInfo) {
   };
 
   // Обработка клика по клетке поля
-  const handleCellClick = useCallback((row: number, col: number) => {
-    if (!winner) {
-      if (nextTurn && board[row][col] === "") {
-        makeMove(flags.player, row, col);
+  const handleCellClick = useCallback(
+    (row: number, col: number) => {
+      if (!winner) {
+        if (nextTurn && !board[row][col]) {
+          makeMove(flags.player, row, col);
+        }
       }
-    }
-  }, [winner, nextTurn, board]);
+    },
+    [winner, nextTurn, board]
+  );
 
   const checkWinner = (flag: string) => {
     if ((checkLines(flag) || checkDiagonals(flag)) && !winner) {
@@ -153,10 +156,19 @@ function TicTacToe({ moves }: IMovesInfo) {
     dispatch({ type: restart.type });
   };
 
-  const cellClick$ = fromEvent(document, "click");
-  cellClick$.subscribe(
-    x => console.log(x)
-  );
+  useEffect(() => {
+    const cellClick$ = fromEvent(
+      document.getElementsByClassName("cell"),
+      "click"
+    ).subscribe(() => {
+      console.log(nextTurn);
+      botMove();
+    });
+
+    return () => {
+      cellClick$.unsubscribe();
+    };
+  }, [nextTurn]);
 
   // const stream$ = new Observable((observer) => {
   //   observer.next();
@@ -202,10 +214,7 @@ function TicTacToe({ moves }: IMovesInfo) {
         Начать заново
       </button>
       <span>
-        {winner == flags.bot
-          ? "Проигрыш"
-          : winner == flags.player
-          && "Победа"}
+        {winner == flags.bot ? "Проигрыш" : winner == flags.player && "Победа"}
       </span>
       <button onClick={() => console.log(moves)}>Инфо</button>
     </div>
