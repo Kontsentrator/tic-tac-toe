@@ -4,9 +4,8 @@ import Cell from "./cell";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { initialState, move, restart, setWinner } from "../store/boardSlice";
 
-import { Observable, fromEvent, delay, debounceTime } from "rxjs";
+import { Observable, fromEvent, delay } from "rxjs";
 import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
-import next from "next";
 
 function TicTacToe({ moves }: IMovesInfo) {
   // Данные о текущем ходе
@@ -64,8 +63,6 @@ function TicTacToe({ moves }: IMovesInfo) {
   //     }
   //   }
   // }, [nextTurn]);
-
-  // Автоматическое сохранение информации о ходе
 
   // -------------- Методы -------------
 
