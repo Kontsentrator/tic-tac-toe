@@ -125,7 +125,6 @@ function TicTacToe({ moves }: IMovesInfo) {
     (row: number, col: number) => {
       if (!winner) {
         if (nextTurn && !board[row][col]) {
-          console.log("Ход игрока")
           makeMove(flags.player, row, col);
         }
       }
@@ -163,7 +162,6 @@ function TicTacToe({ moves }: IMovesInfo) {
       document.getElementsByClassName("cell"),
       "click"
     ).subscribe(() => {   
-      console.log("Подписка"); 
       delay(700);
       if (!nextTurn && hasEmptyCells(board)) {
         let randRow, randCol;
@@ -171,7 +169,6 @@ function TicTacToe({ moves }: IMovesInfo) {
           randRow = Math.round(random(0, rowsNum - 1));
           randCol = Math.round(random(0, colsNum - 1));
         } while (board[randRow][randCol] !== "");
-        console.log("Ход бота");
         makeMove(flags.bot, randRow, randCol);
       }
     });
