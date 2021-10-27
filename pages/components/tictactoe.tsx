@@ -4,8 +4,9 @@ import Cell from "./cell";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { initialState, move, restart, setWinner } from "../store/boardSlice";
 
-import { Observable, fromEvent, delay } from "rxjs";
+import { Observable, fromEvent, delay, debounceTime } from "rxjs";
 import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
+import next from "next";
 
 function TicTacToe({ moves }: IMovesInfo) {
   // Данные о текущем ходе
@@ -123,7 +124,7 @@ function TicTacToe({ moves }: IMovesInfo) {
   const handleCellClick = useCallback(
     (row: number, col: number) => {
       if (!winner) {
-        if (!board[row][col]) {
+        if (nextTurn && !board[row][col]) {
           console.log("Ход игрока")
           makeMove(flags.player, row, col);
         }
@@ -149,7 +150,7 @@ function TicTacToe({ moves }: IMovesInfo) {
       },
     });
     const data = await response.json();
-    console.log(data);
+    //console.log(data);
   };
 
   // Перезапуск игры
@@ -161,14 +162,16 @@ function TicTacToe({ moves }: IMovesInfo) {
     const cellClick$ = fromEvent(
       document.getElementsByClassName("cell"),
       "click"
-    ).subscribe(() => {    
-      console.log("Подписка")    
-      if (hasEmptyCells(board)) {
+    ).subscribe(() => {   
+      console.log("Подписка"); 
+      delay(700);
+      if (!nextTurn && hasEmptyCells(board)) {
         let randRow, randCol;
         do {
           randRow = Math.round(random(0, rowsNum - 1));
           randCol = Math.round(random(0, colsNum - 1));
         } while (board[randRow][randCol] !== "");
+        console.log("Ход бота");
         makeMove(flags.bot, randRow, randCol);
       }
     });
