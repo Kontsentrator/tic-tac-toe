@@ -8,17 +8,10 @@ import { Observable, fromEvent, delay } from "rxjs";
 import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
 
 function TicTacToe({ moves }: IMovesInfo) {
-  // Данные о текущем ходе
-  const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({
-    game: initialState.gameNum,
-    row: 0,
-    col: 0,
-    isPlayer: initialState.nextTurn,
-  });
-
   // Метки полей
   const flags = { player: "x", bot: "o" };
 
+  const gameNum = useAppSelector((state) => state.boardReducer.gameNum);
   const board = useAppSelector((state) => state.boardReducer.board);
   const nextTurn = useAppSelector((state) => state.boardReducer.nextTurn);
   const winner = useAppSelector((state) => state.boardReducer.winner);
@@ -28,41 +21,52 @@ function TicTacToe({ moves }: IMovesInfo) {
   const colsNum = useAppSelector(
     (state) => state.boardReducer.boardSize.colsNum
   );
-  const gameNum = useAppSelector((state) => state.boardReducer.gameNum);
+
+  // Данные о текущем ходе
+  const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({
+    game: gameNum,
+    row: 0,
+    col: 0,
+    isPlayer: nextTurn,
+  });
 
   const dispatch = useAppDispatch();
 
   const makeMove = (flag: string, row: number, col: number) => {
     dispatch({ type: move.type, payload: { flag: flag, row: row, col: col } });
-    setCurrentMoveInfo({ game: 0, row: row, col: col, isPlayer: nextTurn });
-    saveMoveInfo(currentMoveInfo);
+    setCurrentMoveInfo({ game: gameNum, row: row, col: col, isPlayer: nextTurn });
   };
 
   // -------------- Эффекты -------------
 
   // Проверка победителя
-  // useEffect(() => {
-  //   let flag = nextTurn ? flags.bot : flags.player;
-  //   console.log("Проверка");
-  //   if(checkWinner(flag)) {
-  //     dispatch({ type: setWinner.type, payload: flag });
-  //     console.log("Winner в useEffect", winner);
-  //   }
-  // }, [board, nextTurn]);
+  useEffect(() => {
+    console.log("Сохранение API");
+    saveMoveInfo(currentMoveInfo);
+  }, [currentMoveInfo]);
+
+  // Проверка победителя
+  useEffect(() => {
+    let flag = nextTurn ? flags.bot : flags.player;
+    console.log("Проверка");
+    if(checkWinner(flag)) {
+      dispatch({ type: setWinner.type, payload: flag });
+    }
+  }, [board, nextTurn]);
 
   // Ход бота
-  // useEffect(() => {
-  //   if (!winner) {
-  //     if (!nextTurn && hasEmptyCells(board)) {
-  //       let randRow, randCol;
-  //       do {
-  //         randRow = Math.round(random(0, rowsNum - 1));
-  //         randCol = Math.round(random(0, colsNum - 1));
-  //       } while (board[randRow][randCol] !== "");
-  //       makeMove(flags.bot, randRow, randCol);
-  //     }
-  //   }
-  // }, [nextTurn]);
+  useEffect(() => {
+    if (!winner) {
+      if (!nextTurn && hasEmptyCells(board)) {
+        let randRow, randCol;
+        do {
+          randRow = Math.round(random(0, rowsNum - 1));
+          randCol = Math.round(random(0, colsNum - 1));
+        } while (board[randRow][randCol] !== "");
+        makeMove(flags.bot, randRow, randCol);
+      }
+    }
+  }, [nextTurn]);
 
   // -------------- Методы -------------
 
@@ -138,6 +142,7 @@ function TicTacToe({ moves }: IMovesInfo) {
 
   // Cохранение информации о ходе
   const saveMoveInfo = async (moveInfo: IMoveInfo) => {
+    console.log(moveInfo)
     const response = await fetch("http://localhost:3000/api/board", {
       method: "POST",
       body: JSON.stringify({ moveInfo }),
@@ -146,7 +151,7 @@ function TicTacToe({ moves }: IMovesInfo) {
       },
     });
     const data = await response.json();
-    //console.log(data);
+    console.log("Сохранённые данные", data);
   };
 
   // Перезапуск игры
@@ -154,26 +159,26 @@ function TicTacToe({ moves }: IMovesInfo) {
     dispatch({ type: restart.type });
   };
 
-  useEffect(() => {
-    const cellClick$ = fromEvent(
-      document.getElementsByClassName("cell"),
-      "click"
-    ).subscribe(() => {   
-      delay(700);
-      if (!nextTurn && hasEmptyCells(board)) {
-        let randRow, randCol;
-        do {
-          randRow = Math.round(random(0, rowsNum - 1));
-          randCol = Math.round(random(0, colsNum - 1));
-        } while (board[randRow][randCol] !== "");
-        makeMove(flags.bot, randRow, randCol);
-      }
-    });
+  // useEffect(() => {
+  //   const cellClick$ = fromEvent(
+  //     document.getElementsByClassName("cell"),
+  //     "click"
+  //   ).subscribe(() => {   
+  //     delay(700);
+  //     if (!nextTurn && hasEmptyCells(board)) {
+  //       let randRow, randCol;
+  //       do {
+  //         randRow = Math.round(random(0, rowsNum - 1));
+  //         randCol = Math.round(random(0, colsNum - 1));
+  //       } while (board[randRow][randCol] !== "");
+  //       makeMove(flags.bot, randRow, randCol);
+  //     }
+  //   });
 
-    return () => {
-      cellClick$.unsubscribe();
-    }
-  }, [nextTurn]);
+  //   return () => {
+  //     cellClick$.unsubscribe();
+  //   }
+  // }, [nextTurn]);
 
   // const stream$ = new Observable((observer) => {
   //   observer.next();
