@@ -1,0 +1,9 @@
+.history {
+    display: flex;
+    flex-direction: column;
+}
+
+.history__move {
+    display: block;
+    border: 1px solid black;
+}
