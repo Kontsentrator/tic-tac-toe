@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { history } from "../data/history";
+import { history } from "../data/statistic";
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
