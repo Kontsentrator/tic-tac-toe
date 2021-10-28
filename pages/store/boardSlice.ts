@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
 interface IBoardSize {
-  rowsNum: number;
-  colsNum: number;
+  rowsCount: number;
+  colsCount: number;
 }
 
 interface IBoardState {
@@ -11,24 +11,28 @@ interface IBoardState {
   boardSize: IBoardSize;
   winner: string;
   gameNum: number;
+  playerWinCount: number;
+  botWinCount: number;
 }
 
 const initBoardSize: IBoardSize = {
-  rowsNum: 3,
-  colsNum: 3,
+  rowsCount: 3,
+  colsCount: 3,
 };
 
 export const initialState: IBoardState = {
-  board: Array(initBoardSize.rowsNum).fill(
-    Array(initBoardSize.colsNum).fill("")
+  board: Array(initBoardSize.rowsCount).fill(
+    Array(initBoardSize.colsCount).fill("")
   ),
   nextTurn: true,
   boardSize: {
-    rowsNum: initBoardSize.rowsNum,
-    colsNum: initBoardSize.colsNum,
+    rowsCount: initBoardSize.rowsCount,
+    colsCount: initBoardSize.colsCount,
   },
   winner: "",
   gameNum: 1,
+  playerWinCount: 0,
+  botWinCount: 0,
 };
 
 export const boardSlice = createSlice({
