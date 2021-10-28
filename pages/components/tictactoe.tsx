@@ -4,8 +4,8 @@ import Cell from "./cell";
 import { useAppSelector, useAppDispatch } from "../store/hooks";
 import { initialState, move, restart, setWinner } from "../store/boardSlice";
 
-import { Observable, fromEvent, delay } from "rxjs";
-import { IMoveInfo, IMovesInfo } from "../interfaces/interface";
+import { Observable, fromEvent, delay, fromEventPattern } from "rxjs";
+import { IMoveInfo, IMovesInfo, IStatistic } from "../interfaces/interface";
 
 function TicTacToe({ moves }: IMovesInfo) {
   // Метки полей
@@ -15,12 +15,18 @@ function TicTacToe({ moves }: IMovesInfo) {
   const board = useAppSelector((state) => state.boardReducer.board);
   const nextTurn = useAppSelector((state) => state.boardReducer.nextTurn);
   const winner = useAppSelector((state) => state.boardReducer.winner);
-  const rowsNum = useAppSelector(
-    (state) => state.boardReducer.boardSize.rowsNum
+  const rowsCount = useAppSelector(
+    (state) => state.boardReducer.boardSize.rowsCount
   );
-  const colsNum = useAppSelector(
-    (state) => state.boardReducer.boardSize.colsNum
+  const colsCount = useAppSelector(
+    (state) => state.boardReducer.boardSize.colsCount
   );
+  const playerWinCount = useAppSelector(
+    (state) => state.boardReducer.playerWinCount
+  )
+  const botWinCount = useAppSelector(
+    (state) => state.boardReducer.botWinCount
+  )
 
   // Данные о текущем ходе
   const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({
@@ -29,6 +35,12 @@ function TicTacToe({ moves }: IMovesInfo) {
     col: 0,
     isPlayer: nextTurn,
   });
+
+  const [statistic, setStatistic] = useState<IStatistic>({
+    playerWinCount: playerWinCount,
+    botWinCount: botWinCount,
+    history: [currentMoveInfo],
+  })
 
   const dispatch = useAppDispatch();
 
@@ -41,7 +53,6 @@ function TicTacToe({ moves }: IMovesInfo) {
 
   // Проверка победителя
   useEffect(() => {
-    console.log("Сохранение API");
     saveMoveInfo(currentMoveInfo);
   }, [currentMoveInfo]);
 
@@ -60,8 +71,8 @@ function TicTacToe({ moves }: IMovesInfo) {
       if (!nextTurn && hasEmptyCells(board)) {
         let randRow, randCol;
         do {
-          randRow = Math.round(random(0, rowsNum - 1));
-          randCol = Math.round(random(0, colsNum - 1));
+          randRow = Math.round(random(0, rowsCount - 1));
+          randCol = Math.round(random(0, colsCount - 1));
         } while (board[randRow][randCol] !== "");
         makeMove(flags.bot, randRow, randCol);
       }
@@ -81,10 +92,10 @@ function TicTacToe({ moves }: IMovesInfo) {
   };
 
   const checkLines = (flag: string): boolean => {
-    for (let row = 0; row < rowsNum; row++) {
+    for (let row = 0; row < rowsCount; row++) {
       let rowCheck = true;
       let colCheck = true;
-      for (let col = 0; col < colsNum; col++) {
+      for (let col = 0; col < colsCount; col++) {
         rowCheck &&= board[row][col] === flag;
         colCheck &&= board[col][row] === flag;
       }
@@ -99,9 +110,9 @@ function TicTacToe({ moves }: IMovesInfo) {
   const checkDiagonals = (flag: string): boolean => {
     let toRight = true;
     let toLeft = true;
-    for (let row = 0; row < rowsNum; row++) {
+    for (let row = 0; row < rowsCount; row++) {
       toRight &&= board[row][row] === flag;
-      toLeft &&= board[rowsNum - 1 - row][row] === flag;
+      toLeft &&= board[rowsCount - 1 - row][row] === flag;
     }
 
     if (toRight || toLeft) {
@@ -114,8 +125,8 @@ function TicTacToe({ moves }: IMovesInfo) {
     if (hasEmptyCells(board)) {
       let randRow, randCol;
       do {
-        randRow = Math.round(random(0, rowsNum - 1));
-        randCol = Math.round(random(0, colsNum - 1));
+        randRow = Math.round(random(0, rowsCount - 1));
+        randCol = Math.round(random(0, colsCount - 1));
       } while (board[randRow][randCol] !== "");
       makeMove(flags.bot, randRow, randCol);
     }
