@@ -30,7 +30,7 @@ export const initialState: IBoardState = {
     colsCount: initBoardSize.colsCount,
   },
   winner: "",
-  gameNum: 1,
+  gameNum: 0,
   playerWinCount: 0,
   botWinCount: 0,
 };
@@ -55,8 +55,20 @@ export const boardSlice = createSlice({
     setWinner: (state, action: PayloadAction<string>) => {
       state.winner = action.payload;
     },
+    increasePlayerWinCount: (state) => {
+      state.playerWinCount++;
+    },
+    increaseBotWinCount: (state) => {
+      state.botWinCount++;
+    },
   },
 });
 
-export const { move, restart, setWinner } = boardSlice.actions;
+export const {
+  move,
+  restart,
+  setWinner,
+  increasePlayerWinCount,
+  increaseBotWinCount,
+} = boardSlice.actions;
 export default boardSlice.reducer;
