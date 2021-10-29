@@ -1,13 +1,24 @@
 import React, { memo, useCallback, useEffect, useState } from "react";
+import Link from "next/link";
+import { Observable, fromEvent, delay, fromEventPattern } from "rxjs";
 import Cell from "./cell";
+import StatisticMenu from "./statisticMenu";
 
 import { useAppSelector, useAppDispatch } from "../store/hooks";
-import { initialState, move, restart, setWinner } from "../store/boardSlice";
+import {
+  initialState,
+  move,
+  restart,
+  setWinner,
+  increasePlayerWinCount,
+  increaseBotWinCount,
+} from "../store/boardSlice";
 
-import { Observable, fromEvent, delay, fromEventPattern } from "rxjs";
-import { IMoveInfo, IMovesInfo, IStatistic } from "../interfaces/interface";
 
-function TicTacToe({ moves }: IMovesInfo) {
+import { IMoveInfo, IStatistic } from "../interfaces/interface";
+import { statistic } from "../data/statistic";
+
+function TicTacToe() {
   // Метки полей
   const flags = { player: "x", bot: "o" };
 
@@ -21,62 +32,65 @@ function TicTacToe({ moves }: IMovesInfo) {
   const colsCount = useAppSelector(
     (state) => state.boardReducer.boardSize.colsCount
   );
+
   const playerWinCount = useAppSelector(
     (state) => state.boardReducer.playerWinCount
-  )
+  );
   const botWinCount = useAppSelector(
     (state) => state.boardReducer.botWinCount
-  )
+  );
 
   // Данные о текущем ходе
   const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({
-    game: gameNum,
     row: 0,
     col: 0,
     isPlayer: nextTurn,
   });
 
-  const [statistic, setStatistic] = useState<IStatistic>({
-    playerWinCount: playerWinCount,
-    botWinCount: botWinCount,
-    history: [currentMoveInfo],
-  })
+  statistic.botWinCount = botWinCount;
+  statistic.playerWinCount = playerWinCount;
+
+  while(statistic.history.length <= gameNum) {
+    statistic.history.push([]);
+  }
 
   const dispatch = useAppDispatch();
 
   const makeMove = (flag: string, row: number, col: number) => {
     dispatch({ type: move.type, payload: { flag: flag, row: row, col: col } });
-    setCurrentMoveInfo({ game: gameNum, row: row, col: col, isPlayer: nextTurn });
+    setCurrentMoveInfo({
+      row: row,
+      col: col,
+      isPlayer: nextTurn,
+    });
   };
 
   // -------------- Эффекты -------------
 
   // Проверка победителя
   useEffect(() => {
-    saveMoveInfo(currentMoveInfo);
+    statistic.history[gameNum].push(currentMoveInfo);
+    //statistic.history[gameNum].push(currentMoveInfo);
+    saveStatistic(statistic);
   }, [currentMoveInfo]);
 
   // Проверка победителя
   useEffect(() => {
     let flag = nextTurn ? flags.bot : flags.player;
-    console.log("Проверка");
-    if(checkWinner(flag)) {
+    if (checkWinner(flag)) {
       dispatch({ type: setWinner.type, payload: flag });
+
+      if(flag == flags.player) {
+        dispatch({ type: increasePlayerWinCount.type });
+      } else {
+        dispatch({ type: increaseBotWinCount.type });
+      }
     }
   }, [board, nextTurn]);
 
   // Ход бота
   useEffect(() => {
-    if (!winner) {
-      if (!nextTurn && hasEmptyCells(board)) {
-        let randRow, randCol;
-        do {
-          randRow = Math.round(random(0, rowsCount - 1));
-          randCol = Math.round(random(0, colsCount - 1));
-        } while (board[randRow][randCol] !== "");
-        makeMove(flags.bot, randRow, randCol);
-      }
-    }
+    botMove();
   }, [nextTurn]);
 
   // -------------- Методы -------------
@@ -122,7 +136,7 @@ function TicTacToe({ moves }: IMovesInfo) {
   };
 
   const botMove = () => {
-    if (hasEmptyCells(board)) {
+    if (!winner && !nextTurn && hasEmptyCells(board)) {
       let randRow, randCol;
       do {
         randRow = Math.round(random(0, rowsCount - 1));
@@ -152,17 +166,15 @@ function TicTacToe({ moves }: IMovesInfo) {
   };
 
   // Cохранение информации о ходе
-  const saveMoveInfo = async (moveInfo: IMoveInfo) => {
-    console.log(moveInfo)
+  const saveStatistic = async (stat: IStatistic) => {
+    console.log("stat", stat);
     const response = await fetch("http://localhost:3000/api/board", {
       method: "POST",
-      body: JSON.stringify({ moveInfo }),
+      body: JSON.stringify({ stat }),
       headers: {
         "Content-Type": "application/json",
       },
     });
-    const data = await response.json();
-    console.log("Сохранённые данные", data);
   };
 
   // Перезапуск игры
@@ -174,7 +186,7 @@ function TicTacToe({ moves }: IMovesInfo) {
   //   const cellClick$ = fromEvent(
   //     document.getElementsByClassName("cell"),
   //     "click"
-  //   ).subscribe(() => {   
+  //   ).subscribe(() => {
   //     delay(700);
   //     if (!nextTurn && hasEmptyCells(board)) {
   //       let randRow, randCol;
@@ -214,7 +226,7 @@ function TicTacToe({ moves }: IMovesInfo) {
   return (
     <div className="game">
       <p>{initialState.nextTurn ? "Вы ходите первым" : "Вы ходите вторым"}</p>
-      <p>Игра №{gameNum}</p>
+      <p>Игра №{gameNum + 1}</p>
       <div className="board">
         {board.map((row, rowNum) => (
           <div className="row" key={rowNum}>
@@ -234,10 +246,16 @@ function TicTacToe({ moves }: IMovesInfo) {
       <button className="button__restart" onClick={restartGame}>
         Начать заново
       </button>
+
       <span>
         {winner == flags.bot ? "Проигрыш" : winner == flags.player && "Победа"}
       </span>
-      <button onClick={() => console.log(moves)}>Инфо</button>
+
+      <Link href="/history">
+        <a href="">История ходов</a>
+      </Link>
+
+      <StatisticMenu />
     </div>
   );
 }
