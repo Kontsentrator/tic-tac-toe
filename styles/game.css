@@ -1,7 +1,15 @@
+.game__wrap {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.game {
+    display: flex;
+    flex-direction: column;
+}
+
 .board {    
     display: inline-block;
-    flex-wrap: wrap;
-    margin: 0 auto;
 }
 
 .row {
