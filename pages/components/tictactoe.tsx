@@ -57,7 +57,7 @@ function TicTacToe() {
   const dispatch = useAppDispatch();
 
   const makeMove = (flag: string, row: number, col: number) => {
-    dispatch({ type: move.type, payload: { flag: flag, row: row, col: col } });
+    dispatch({ type: 'MY_MOVE', payload: { flag: flag, row: row, col: col, isPlayer: nextTurn} });
     setCurrentMoveInfo({
       row: row,
       col: col,
