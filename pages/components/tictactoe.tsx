@@ -14,7 +14,6 @@ import {
   increaseBotWinCount,
 } from "../store/boardSlice";
 
-
 import { IMoveInfo, IStatistic } from "../interfaces/interface";
 import { statistic } from "../data/statistic";
 
@@ -41,11 +40,7 @@ function TicTacToe() {
   );
 
   // Данные о текущем ходе
-  const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>({
-    row: 0,
-    col: 0,
-    isPlayer: nextTurn,
-  });
+  const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>();
 
   statistic.botWinCount = botWinCount;
   statistic.playerWinCount = playerWinCount;
@@ -57,7 +52,7 @@ function TicTacToe() {
   const dispatch = useAppDispatch();
 
   const makeMove = (flag: string, row: number, col: number) => {
-    dispatch({ type: move.type, payload: { flag: flag, row: row, col: col } });
+    dispatch({ type: 'MY_MOVE', payload: { flag: flag, row: row, col: col, isPlayer: nextTurn} });
     setCurrentMoveInfo({
       row: row,
       col: col,
@@ -67,10 +62,11 @@ function TicTacToe() {
 
   // -------------- Эффекты -------------
 
-  // Проверка победителя
+  // Сохранение статистики
   useEffect(() => {
-    statistic.history[gameNum].push(currentMoveInfo);
-    //statistic.history[gameNum].push(currentMoveInfo);
+    if(currentMoveInfo) {
+      statistic.history[gameNum].push(currentMoveInfo);
+    }
     saveStatistic(statistic);
   }, [currentMoveInfo]);
 
@@ -135,6 +131,7 @@ function TicTacToe() {
     return false;
   };
 
+  // Ход бота
   const botMove = () => {
     if (!winner && !nextTurn && hasEmptyCells(board)) {
       let randRow, randCol;
@@ -167,7 +164,6 @@ function TicTacToe() {
 
   // Cохранение информации о ходе
   const saveStatistic = async (stat: IStatistic) => {
-    console.log("stat", stat);
     const response = await fetch("http://localhost:3000/api/board", {
       method: "POST",
       body: JSON.stringify({ stat }),
