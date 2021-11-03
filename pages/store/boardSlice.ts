@@ -1,4 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { ofType, StateObservable } from "redux-observable";
+import { delay, delayWhen, first, map, mapTo, mergeMap, of, timer } from "rxjs";
 
 interface IBoardSize {
   rowsCount: number;
@@ -63,6 +65,13 @@ export const boardSlice = createSlice({
     },
   },
 });
+
+export const myMoveEpic = (actions$: any) =>
+  actions$.pipe(
+    ofType("MY_MOVE"),
+    delayWhen((action: any) => (!action.payload.isPlayer ? timer(200) : timer(0))),
+    map((action: any) => ({ type: move.type, payload: action.payload }))
+  );
 
 export const {
   move,
