@@ -29,9 +29,9 @@ export default function History(statistic: IStatistic) {
                 move.isPlayer ? "history__move_player" : "history__move_bot"
               }`}
             >
-              <p className="move__param">Ряд: {move.row}</p>
-              <p className="move__param">Колонка: {move.col}</p>
-              <p className="move__param">
+              <p className="history__param">Ряд: {move.row}</p>
+              <p className="history__param">Колонка: {move.col}</p>
+              <p className="history__param">
                 Игрок: {move.isPlayer ? "да" : "нет"}
               </p>
             </div>
