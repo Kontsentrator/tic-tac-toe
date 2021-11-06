@@ -31,13 +31,10 @@ function TicTacToe() {
   const colsCount = useAppSelector(
     (state) => state.boardReducer.boardSize.colsCount
   );
-
   const playerWinCount = useAppSelector(
     (state) => state.boardReducer.playerWinCount
   );
-  const botWinCount = useAppSelector(
-    (state) => state.boardReducer.botWinCount
-  );
+  const botWinCount = useAppSelector((state) => state.boardReducer.botWinCount);
 
   // Данные о текущем ходе
   const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>();
@@ -45,14 +42,17 @@ function TicTacToe() {
   statistic.botWinCount = botWinCount;
   statistic.playerWinCount = playerWinCount;
 
-  while(statistic.history.length <= gameNum) {
+  while (statistic.history.length <= gameNum) {
     statistic.history.push([]);
   }
 
   const dispatch = useAppDispatch();
 
   const makeMove = (flag: string, row: number, col: number) => {
-    dispatch({ type: 'MY_MOVE', payload: { flag: flag, row: row, col: col, isPlayer: nextTurn} });
+    dispatch({
+      type: "MY_MOVE",
+      payload: { flag: flag, row: row, col: col, isPlayer: nextTurn },
+    });
     setCurrentMoveInfo({
       row: row,
       col: col,
@@ -64,7 +64,7 @@ function TicTacToe() {
 
   // Сохранение статистики
   useEffect(() => {
-    if(currentMoveInfo) {
+    if (currentMoveInfo) {
       statistic.history[gameNum].push(currentMoveInfo);
     }
     saveStatistic(statistic);
@@ -76,7 +76,7 @@ function TicTacToe() {
     if (checkWinner(flag)) {
       dispatch({ type: setWinner.type, payload: flag });
 
-      if(flag == flags.player) {
+      if (flag == flags.player) {
         dispatch({ type: increasePlayerWinCount.type });
       } else {
         dispatch({ type: increaseBotWinCount.type });
