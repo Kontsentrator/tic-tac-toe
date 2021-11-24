@@ -18,12 +18,16 @@
         border-radius: 20px;
         padding: 20px;
     }
+
+    &__param {
+        color: white;
+    }
     
     &__movePlayer {  
-        background-color: #E6EE9C;
+        background-color: yellowgreen;
     }
     
     &__moveBot {  
-        background-color: #FFCDD2;
+        background-color: palevioletred;
     }
 }
