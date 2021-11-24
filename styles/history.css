@@ -4,6 +4,10 @@
     gap: 20px;
 }
 
+.error {
+    color: red;
+}
+
 .history__game {
     display: flex;
     flex-wrap: wrap;
