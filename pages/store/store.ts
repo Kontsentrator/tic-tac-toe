@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { combineEpics } from "redux-observable";
+import { combineEpics, createEpicMiddleware } from "redux-observable";
 import { boardSlice, myMoveEpic, myMoveInfoEpic } from "./boardSlice";
-import { createEpicMiddleware } from "redux-observable";
 
 const epicMiddleware = createEpicMiddleware();
 
