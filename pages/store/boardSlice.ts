@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ofType, StateObservable } from "redux-observable";
-import { delay, delayWhen, first, map, mapTo, mergeMap, of, timer } from "rxjs";
+import { delay, delayWhen, first, map, mapTo, mergeMap, of, timer, takeWhile } from "rxjs";
 
 interface IBoardSize {
   rowsCount: number;
@@ -66,9 +66,12 @@ export const boardSlice = createSlice({
   },
 });
 
-export const myMoveEpic = (actions$: any) =>
+export const myMoveEpic = (actions$: any, state$: any) =>
   actions$.pipe(
     ofType("MY_MOVE"),
+    // TakeWhile — делай ход ботом, пока нет победителя.
+    // Здесь из state$.value ты можешь получить актуальное значение winner. Поэтому пока winner = '' бот будет ходить
+    takeWhile(() => !state$.value.boardReducer.winner),
     delayWhen((action: any) => (!action.payload.isPlayer ? timer(1000) : timer(0))),
     map((action: any) => ({ type: move.type, payload: action.payload }))
   );
