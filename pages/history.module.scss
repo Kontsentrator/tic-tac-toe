@@ -1,0 +1,29 @@
+.history {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    &__game {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    &__gameTitle {
+        font-size: 18px;
+        font-weight: 600;
+    }
+    
+    &__move {  
+        border-radius: 20px;
+        padding: 20px;
+    }
+    
+    &__movePlayer {  
+        background-color: #E6EE9C;
+    }
+    
+    &__moveBot {  
+        background-color: #FFCDD2;
+    }
+}
