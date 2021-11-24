@@ -32,11 +32,11 @@ const History: React.FC<IHistoryProps> = ({ statistic }) => {
               <div
                 key={index}
                 className={cn(styles.history__move, move.isPlayer 
-                  ? styles.history__movePlayer : styles.history__moveBot)
+                  ? styles.history__movePlayer : styles.history__moveBot)}
               >
-                <p className="history__param">Ряд: {move.row}</p>
-                <p className="history__param">Колонка: {move.col}</p>
-                <p className="history__param">
+                <p className={styles.history__param}>Ряд: {move.row}</p>
+                <p className={styles.history__param}>Колонка: {move.col}</p>
+                <p className={styles.history__param}>
                   Игрок: {move.isPlayer ? "да" : "нет"}
                 </p>
               </div>
