@@ -69,7 +69,7 @@ export const boardSlice = createSlice({
 export const myMoveEpic = (actions$: any) =>
   actions$.pipe(
     ofType("MY_MOVE"),
-    delayWhen((action: any) => (!action.payload.isPlayer ? timer(200) : timer(0))),
+    delayWhen((action: any) => (!action.payload.isPlayer ? timer(1000) : timer(0))),
     map((action: any) => ({ type: move.type, payload: action.payload }))
   );
 
