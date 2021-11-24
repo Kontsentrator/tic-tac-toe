@@ -9,19 +9,8 @@ import { WinCountContext } from "./data/context";
 const API_ENDPOINT = "http://localhost:3000/api";
 const RESOURCE = "/board";
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
-  const statistic = await fetch(API_ENDPOINT + RESOURCE)
-    .then((res) => res.json())
-    .catch((error) => {
-      console.log(error);
-      return [];
-    });
-  return { props: statistic };
-};
-
-
-
 export default function Home() {
+  console.log(statistic);
   const winCount = {
     player: statistic.playerWinCount,
     bot: statistic.botWinCount,
