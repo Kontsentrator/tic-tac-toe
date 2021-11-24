@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineEpics } from "redux-observable";
-import { boardSlice, myMoveEpic } from "./boardSlice";
+import { boardSlice, myMoveEpic, myMoveInfoEpic } from "./boardSlice";
 import { createEpicMiddleware } from "redux-observable";
 
 const epicMiddleware = createEpicMiddleware();
@@ -12,7 +12,7 @@ export const store = configureStore({
   middleware: [epicMiddleware],
 });
 
-export const rootEpic = combineEpics(myMoveEpic);
+export const rootEpic = combineEpics(myMoveEpic, myMoveInfoEpic);
 epicMiddleware.run(rootEpic);
 
 export type RootState = ReturnType<typeof store.getState>;
