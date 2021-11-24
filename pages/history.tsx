@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { GetStaticProps } from "next";
 import { IStatistic } from "./interfaces/interface";
+
+interface IHistoryProps {
+  statistic: IStatistic;
+}
 
 const API_ENDPOINT = "http://localhost:3000/api";
 const RESOURCE = "/board";
@@ -10,15 +14,14 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     .then((res) => res.json())
     .catch((error) => {
       console.log(error);
-      return [];
     });
-  return { props: statistic };
+  return { props: {statistic} };
 };
 
-export default function History(statistic: IStatistic) {
+const History: React.FC<IHistoryProps> = ({ statistic }) => {
   return (
     <div className="history">
-      {statistic.history.map((game, index) => (
+      {statistic && statistic.history.map((game, index) => (
         <div key={index} className="history__game">
           <p className="history__game-title">Игра № {index + 1}</p>
 
@@ -40,4 +43,6 @@ export default function History(statistic: IStatistic) {
       ))}
     </div>
   );
-}
+};
+
+export default memo(History);
