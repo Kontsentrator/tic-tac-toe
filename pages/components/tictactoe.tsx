@@ -16,8 +16,9 @@ import {
 
 import { IMoveInfo, IStatistic } from "../interfaces/interface";
 import { statistic } from "../data/statistic";
+import next from "next";
 
-function TicTacToe() {
+const TicTacToe = () => {
   // Метки полей
   const flags = { player: "x", bot: "o" };
 
@@ -38,6 +39,7 @@ function TicTacToe() {
 
   // Данные о текущем ходе
   const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>();
+  const [curWinner, setCurWinner] = useState<string>();
 
   statistic.botWinCount = botWinCount;
   statistic.playerWinCount = playerWinCount;
@@ -49,6 +51,7 @@ function TicTacToe() {
   const dispatch = useAppDispatch();
 
   const makeMove = (flag: string, row: number, col: number) => {
+    console.log("Hod");
     dispatch({
       type: "MY_MOVE",
       payload: { flag: flag, row: row, col: col, isPlayer: nextTurn },
@@ -60,7 +63,19 @@ function TicTacToe() {
     });
   };
 
+  const checkWinner = (flag: string) => {
+    if ((checkLines(flag) || checkDiagonals(flag)) && !winner) {
+      return true;
+    }
+    return false;
+  };
+  
+
   // -------------- Эффекты -------------
+
+  useEffect(() => {
+    console.log(winner);
+  }, [winner]);
 
   // Сохранение статистики
   useEffect(() => {
@@ -74,6 +89,7 @@ function TicTacToe() {
   useEffect(() => {
     let flag = nextTurn ? flags.bot : flags.player;
     if (checkWinner(flag)) {
+      console.log("est pobeditel");
       dispatch({ type: setWinner.type, payload: flag });
 
       if (flag == flags.player) {
@@ -82,12 +98,25 @@ function TicTacToe() {
         dispatch({ type: increaseBotWinCount.type });
       }
     }
-  }, [board, nextTurn]);
+  }, [board, nextTurn, checkWinner]);
 
   // Ход бота
   useEffect(() => {
+    const botMove = () => {
+      console.log("botMove winner", winner);
+      if (!winner && !nextTurn && hasEmptyCells(board)) {
+        console.log("Hod bota");
+        let randRow, randCol;
+        do {
+          randRow = Math.round(random(0, rowsCount - 1));
+          randCol = Math.round(random(0, colsCount - 1));
+        } while (board[randRow][randCol] !== "");
+        makeMove(flags.bot, randRow, randCol);
+      }
+    };
+
     botMove();
-  }, [nextTurn]);
+  }, [nextTurn, winner, board]);
 
   // -------------- Методы -------------
 
@@ -131,40 +160,21 @@ function TicTacToe() {
     return false;
   };
 
-  // Ход бота
-  const botMove = () => {
-    if (!winner && !nextTurn && hasEmptyCells(board)) {
-      let randRow, randCol;
-      do {
-        randRow = Math.round(random(0, rowsCount - 1));
-        randCol = Math.round(random(0, colsCount - 1));
-      } while (board[randRow][randCol] !== "");
-      makeMove(flags.bot, randRow, randCol);
-    }
-  };
-
   // Обработка клика по клетке поля
   const handleCellClick = useCallback(
     (row: number, col: number) => {
-      if (!winner) {
-        if (nextTurn && !board[row][col]) {
-          makeMove(flags.player, row, col);
-        }
+      if (!winner && nextTurn && !board[row][col]) {
+        makeMove(flags.player, row, col);
       }
     },
-    [winner, nextTurn, board]
+    [winner, nextTurn, board, makeMove, flags.player]
   );
 
-  const checkWinner = (flag: string) => {
-    if ((checkLines(flag) || checkDiagonals(flag)) && !winner) {
-      return true;
-    }
-    return false;
-  };
+  
 
   // Cохранение информации о ходе
   const saveStatistic = async (stat: IStatistic) => {
-    const response = await fetch("http://localhost:3000/api/board", {
+    await fetch("http://localhost:3000/api/board", {
       method: "POST",
       body: JSON.stringify({ stat }),
       headers: {
@@ -177,47 +187,6 @@ function TicTacToe() {
   const restartGame = () => {
     dispatch({ type: restart.type });
   };
-
-  // useEffect(() => {
-  //   const cellClick$ = fromEvent(
-  //     document.getElementsByClassName("cell"),
-  //     "click"
-  //   ).subscribe(() => {
-  //     delay(700);
-  //     if (!nextTurn && hasEmptyCells(board)) {
-  //       let randRow, randCol;
-  //       do {
-  //         randRow = Math.round(random(0, rowsNum - 1));
-  //         randCol = Math.round(random(0, colsNum - 1));
-  //       } while (board[randRow][randCol] !== "");
-  //       makeMove(flags.bot, randRow, randCol);
-  //     }
-  //   });
-
-  //   return () => {
-  //     cellClick$.unsubscribe();
-  //   }
-  // }, [nextTurn]);
-
-  // const stream$ = new Observable((observer) => {
-  //   observer.next();
-  // });
-  // stream$.subscribe(() => {
-  //   console.log("После хода");
-  //   let tempWinner = winner;
-  //   console.log("Проверка игрока");
-  //   if (checkWinner(flags.player)) {
-  //     tempWinner = flags.player;
-  //   }
-  //   if (!tempWinner) {
-  //     botMove();
-  //   }
-  //   console.log("Проверка бота");
-  //   if (checkWinner(flags.bot)) {
-  //     tempWinner = flags.bot;
-  //   }
-  //   dispatch({ type: setWinner.type, payload: tempWinner });
-  // });
 
   return (
     <div className="game">
