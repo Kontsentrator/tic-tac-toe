@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { Observable, fromEvent, delay, fromEventPattern } from "rxjs";
 import Cell from "./cell";
@@ -15,8 +15,9 @@ import {
 } from "../store/boardSlice";
 
 import { IMoveInfo, IStatistic } from "../interfaces/interface";
-import { statistic } from "../data/statistic";
+// import { statistic } from "../data/statistic";
 import next from "next";
+import { WinCountContext } from "../data/context";
 
 const TicTacToe = () => {
   // Метки полей
@@ -41,20 +42,23 @@ const TicTacToe = () => {
   const [currentMoveInfo, setCurrentMoveInfo] = useState<IMoveInfo>();
   const [curWinner, setCurWinner] = useState<string>();
 
-  statistic.botWinCount = botWinCount;
-  statistic.playerWinCount = playerWinCount;
+  // statistic.botWinCount = botWinCount;
+  // statistic.playerWinCount = playerWinCount;
 
-  while (statistic.history.length <= gameNum) {
-    statistic.history.push([]);
-  }
+  // while (statistic.history.length <= gameNum) {
+  //   statistic.history.push([]);
+  // }
 
   const dispatch = useAppDispatch();
+  // Получаем функцию обновления стейта, чтобы прокинуть в observer
+  const {statistic, setStatistic} = useContext(WinCountContext);
+
 
   const makeMove = (flag: string, row: number, col: number) => {
     console.log("Hod");
     dispatch({
       type: "MY_MOVE",
-      payload: { flag: flag, row: row, col: col, isPlayer: nextTurn },
+      payload: { flag: flag, row: row, col: col, isPlayer: nextTurn, setStatistic },
     });
     setCurrentMoveInfo({
       row: row,
@@ -79,10 +83,10 @@ const TicTacToe = () => {
 
   // Сохранение статистики
   useEffect(() => {
-    if (currentMoveInfo) {
-      statistic.history[gameNum].push(currentMoveInfo);
-    }
-    saveStatistic(statistic);
+    // if (currentMoveInfo) {
+    //   statistic.history[gameNum].push(currentMoveInfo);
+    // }
+    // saveStatistic(statistic);
   }, [currentMoveInfo]);
 
   // Проверка победителя

@@ -2,11 +2,12 @@ import React, { useContext, memo } from "react";
 import { WinCountContext } from "../data/context";
 
 const StatisticMenu: React.FC = () => {
-    const contextWinCount = useContext(WinCountContext);
+  // Получаем статистику из контекста
+    const {statistic} = useContext(WinCountContext);
   return (
     <div className="statistic-menu">
-      <p>Игрок: {contextWinCount.player}</p>
-      <p>Бот: {contextWinCount.bot}</p>
+      <p>Игрок: {statistic.player}</p>
+      <p>Бот: {statistic.bot}</p>
     </div>
   );
 };

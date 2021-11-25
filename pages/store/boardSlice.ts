@@ -69,9 +69,19 @@ export const boardSlice = createSlice({
 export const myMoveEpic = (actions$: any, state$: any) =>
   actions$.pipe(
     ofType("MY_MOVE"),
-    // TakeWhile — делай ход ботом, пока нет победителя.
-    // Здесь из state$.value ты можешь получить актуальное значение winner. Поэтому пока winner = '' бот будет ходить
-    takeWhile(() => !state$.value.boardReducer.winner),
+    takeWhile((action: any) => {
+      // Получаем актуального победителя
+      const winner = state$.value.boardReducer.winner
+      // Обновляем значение контекста
+      if (winner === 'x') {
+        action.payload.setStatistic(prevState => ({...prevState, player: prevState.player + 1}))
+      }
+      if (winner === 'o') {
+        action.payload.setStatistic(prevState => ({...prevState, bot: prevState.bot + 1}))
+      }
+      // Нет победителя? Тогда бот продолжает ходить
+      return !state$.value.boardReducer.winner
+    }),
     delayWhen((action: any) => (!action.payload.isPlayer ? timer(1000) : timer(0))),
     map((action: any) => ({ type: move.type, payload: action.payload }))
   );
