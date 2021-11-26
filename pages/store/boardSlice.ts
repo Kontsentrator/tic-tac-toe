@@ -99,7 +99,6 @@ export const boardSlice = createSlice({
     addHistory: (state) => {
       state.statistic.history[state.gameNum].push(state.currentMoveInfo);
     },
-    setHistory: (state, action: PayloadAction<History>) => {},
     increaseBotWinCount: (state) => {
       state.statistic.botWinCount++;
     },
@@ -200,8 +199,7 @@ export const saveStatisticEpic = (actions$: any, state$: any) =>
       return !winner;
     }),
     map((action: any) => ({
-      type: setHistory.type,
-      payload: action.payload.statistic.history,
+      type: "ADD_HISTORY"
     }))
   );
 
@@ -212,7 +210,6 @@ export const {
   setWinner,
   setCurrentMoveInfo,
   addHistory,
-  setHistory,
   increaseBotWinCount,
   increasePlayerWinCount,
 } = boardSlice.actions;
