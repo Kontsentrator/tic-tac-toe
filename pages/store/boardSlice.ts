@@ -167,6 +167,27 @@ export const setMoveInfoEpic = (actions$: any, state$: any) =>
     }))
   );
 
+export const addHistoryEpic = (actions$: any, state$: any) =>
+  actions$.pipe(
+    ofType("ADD_HISTORY"),
+    filter(() => {
+      const currentMoveInfo = state$.value.boardReducer.currentMoveInfo;
+      const history = state$.value.boardReducer.statistic.history;
+      const gameNum = state$.value.boardReducer.gameNum;
+
+      return (
+        currentMoveInfo &&
+        currentMoveInfo.col !== initialState.currentMoveInfo.col &&
+        currentMoveInfo.row !== initialState.currentMoveInfo.row &&
+        !history[gameNum].find((el: IMoveInfo) => el === currentMoveInfo)
+      );
+    }),
+    map((action: any) => ({
+      type: addHistory.type,
+      payload: action.payload,
+    }))
+  );
+
 export const saveStatisticEpic = (actions$: any, state$: any) =>
   actions$.pipe(
     ofType("SAVE_STATISTIC"),
