@@ -63,8 +63,8 @@
         grid-column: 2;
         grid-row: 2;
     }
-}
 
-.error {
-    color: red;
+    &__error {
+        color: red;
+    }
 }
