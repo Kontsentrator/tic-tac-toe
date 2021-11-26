@@ -11,16 +11,18 @@ import StatisticMenu from "../StatisticMenu";
 import styles from "./tictactoe.module.scss";
 import { useAppSelector, useAppDispatch } from "../../store/hooks";
 import {
-  initialState,
   restart,
   setWinner,
-  addHistory,
   increaseBotWinCount,
   increasePlayerWinCount,
 } from "../../store/boardSlice";
 import { History, IStatistic } from "../../interfaces/interface";
 import { statistic as dataStatistic } from "../../data/statistic";
 import { WinCountContext } from "../../data/context";
+import { checkWinner } from "./checkWinner";
+
+const API_ENDPOINT = "http://localhost:3000/api";
+const RESOURCE = "/board";
 
 const TicTacToe = () => {
   // Состояния
@@ -39,38 +41,24 @@ const TicTacToe = () => {
   const board = useAppSelector((state) => state.boardReducer.board);
   const nextTurn = useAppSelector((state) => state.boardReducer.nextTurn);
   const winner = useAppSelector((state) => state.boardReducer.winner);
-  const rowsCount = useAppSelector(
-    (state) => state.boardReducer.boardSize.rowsCount
-  );
-  const colsCount = useAppSelector(
-    (state) => state.boardReducer.boardSize.colsCount
-  );
   const history = useAppSelector(
     (state) => state.boardReducer.statistic.history
   );
 
   const dispatch = useAppDispatch();
 
-  const checkWinner = (flag: string) => {
-    if ((checkLines(flag) || checkDiagonals(flag)) && !winner) {
-      return true;
-    }
-    return false;
-  };
-
   // -------------- Эффекты -------------
+
+  useEffect(() => {
+    console.log(error);
+  }, [error]);
+
+  useEffect(() => {
+    dispatch({ type: "ADD_HISTORY" });
+  }, [currentMoveInfo]);
 
   // Сохранение статистики
   useEffect(() => {
-    if (
-      currentMoveInfo &&
-      currentMoveInfo.col !== initialState.currentMoveInfo.col &&
-      currentMoveInfo.row !== initialState.currentMoveInfo.row &&
-      !history[gameNum].find((el) => el === currentMoveInfo)
-    ) {
-      dispatch({ type: addHistory.type });
-    }
-
     if (!winner) {
       dataStatistic.history = history;
       dispatch({
@@ -83,14 +71,14 @@ const TicTacToe = () => {
   // Проверка победителя
   useEffect(() => {
     let flag = nextTurn ? flags.bot : flags.player;
-    if (checkWinner(flag)) {
+    if (!winner && checkWinner(flag, board)) {
       dispatch({ type: setWinner.type, payload: flag });
 
       if (flag === flags.bot) dispatch({ type: increaseBotWinCount });
       else if (flag === flags.player)
         dispatch({ type: increasePlayerWinCount });
     }
-  }, [board, nextTurn, checkWinner]);
+  }, [board, nextTurn]);
 
   // Ход бота
   useEffect(() => {
@@ -98,35 +86,6 @@ const TicTacToe = () => {
   }, [nextTurn, winner, board]);
 
   // -------------- Методы -------------
-  const checkLines = (flag: string): boolean => {
-    for (let row = 0; row < rowsCount; row++) {
-      let rowCheck = true,
-        colCheck = true;
-      for (let col = 0; col < colsCount; col++) {
-        rowCheck &&= board[row][col] === flag;
-        colCheck &&= board[col][row] === flag;
-      }
-
-      if (rowCheck || colCheck) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const checkDiagonals = (flag: string): boolean => {
-    let toRight = true,
-      toLeft = true;
-    for (let row = 0; row < rowsCount; row++) {
-      toRight &&= board[row][row] === flag;
-      toLeft &&= board[rowsCount - 1 - row][row] === flag;
-    }
-
-    if (toRight || toLeft) {
-      return true;
-    }
-    return false;
-  };
 
   // Обработка клика по клетке поля
   const handleCellClick = (row: number, col: number) => {
@@ -145,13 +104,13 @@ const TicTacToe = () => {
 
   // Cохранение информации о ходе
   const saveStatistic = async (stat: IStatistic) => {
-    await fetch("http://localhost:3000/api/board", {
+    await fetch(API_ENDPOINT + RESOURCE, {
       method: "POST",
       body: JSON.stringify({ stat }),
       headers: {
         "Content-Type": "application/json",
       },
-    }).catch((err) => setError(err));
+    }).catch((err) => setError(err as Error));
   };
 
   // Перезапуск игры
@@ -161,7 +120,7 @@ const TicTacToe = () => {
 
   return (
     <div className={styles.game}>
-      {error && <div>{error}</div>}
+      {error && <div>{error.message}</div>}
       <p>Игра №{gameNum + 1}</p>
       <div className={styles.game__board}>
         {board.map((row, rowNum) => (
