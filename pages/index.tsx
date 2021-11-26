@@ -1,20 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Provider } from "react-redux";
 import TicTacToe from "./components/Tictactoe";
 import { store } from "./store/store";
-import { statistic } from "./data/statistic";
+import { initialStatistic } from "./data/statistic";
 import { WinCountContext } from "./data/context";
 
 export default function Home() {
-  console.log(statistic);
-  const winCount = {
-    player: statistic.playerWinCount,
-    bot: statistic.botWinCount,
-  };
+  const [statistic, setStatistic] = useState({
+    player: initialStatistic.playerWinCount,
+    bot: initialStatistic.botWinCount,
+  });
 
   return (
     <Provider store={store}>
-      <WinCountContext.Provider value={winCount}>
+      <WinCountContext.Provider value={{ statistic, setStatistic }}>
         <TicTacToe />
       </WinCountContext.Provider>
     </Provider>
