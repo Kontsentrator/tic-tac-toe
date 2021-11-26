@@ -6,8 +6,10 @@ export interface IMoveInfo {
   isPlayer: boolean;
 }
 
+export type History = IMoveInfo[][];
+
 export interface IStatistic {
-  history: IMoveInfo[][];
+  history: History;
   botWinCount: number;
   playerWinCount: number;
 }
