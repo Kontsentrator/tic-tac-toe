@@ -25,14 +25,19 @@ const History: React.FC<IHistoryProps> = ({ statistic }) => {
     <div className={styles.history}>
       {statistic &&
         statistic.history.map((game, index) => (
-          <div key={index} className={styles.history__game}>
+
+        game && (<div key={index} className={styles.history__game}>
             <p className={styles.history__gameTitle}>Игра № {index + 1}</p>
 
             {game.map((move, index) => (
               <div
                 key={index}
-                className={cn(styles.history__move, move.isPlayer 
-                  ? styles.history__movePlayer : styles.history__moveBot)}
+                className={cn(
+                  styles.history__move,
+                  move.isPlayer
+                    ? styles.history__movePlayer
+                    : styles.history__moveBot
+                )}
               >
                 <p className={styles.history__param}>Ряд: {move.row}</p>
                 <p className={styles.history__param}>Колонка: {move.col}</p>
@@ -41,7 +46,7 @@ const History: React.FC<IHistoryProps> = ({ statistic }) => {
                 </p>
               </div>
             ))}
-          </div>
+          </div>)
         ))}
     </div>
   );
