@@ -6,6 +6,7 @@ import {
   playerMoveEpic,
   botMoveEpic,
   saveStatisticEpic,
+  addHistoryEpic,
 } from "./boardSlice";
 
 const epicMiddleware = createEpicMiddleware();
@@ -22,6 +23,7 @@ export const rootEpic = combineEpics(
   playerMoveEpic,
   botMoveEpic,
   saveStatisticEpic,
+  addHistoryEpic,
 );
 epicMiddleware.run(rootEpic);
 
