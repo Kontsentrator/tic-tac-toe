@@ -7,9 +7,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     res.status(200).json(statistic);
   } else if (req.method === "POST") {
     const newStatistic: IStatistic = req.body.stat;
+    statistic.history = newStatistic.history;
     statistic.botWinCount = newStatistic.botWinCount;
     statistic.playerWinCount = newStatistic.playerWinCount;
-    statistic.history = newStatistic.history;
     res.status(201).json(newStatistic);
   }
 }
