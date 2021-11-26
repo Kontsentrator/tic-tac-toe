@@ -1,3 +1,13 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 
-export const WinCountContext = React.createContext({player: 0, bot: 0});
+type Statistic = {
+  player: number;
+  bot: number;
+};
+
+type Context = {
+  statistic: Statistic;
+  setStatistic: Dispatch<SetStateAction<Statistic>>;
+};
+
+export const WinCountContext = React.createContext<Context>();
