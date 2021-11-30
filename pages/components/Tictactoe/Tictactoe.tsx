@@ -27,9 +27,6 @@ const TicTacToe = () => {
   // Состояния
   const [error, setError] = useState<Error>();
 
-  // Метки полей
-  const flags = { player: "x", bot: "o" };
-
   const { statistic, setStatistic } = useContext(WinCountContext);
 
   // Данный из стейта
@@ -42,6 +39,9 @@ const TicTacToe = () => {
   const winner = useAppSelector((state) => state.boardReducer.winner);
   const history = useAppSelector(
     (state) => state.boardReducer.statistic.history
+  );
+  const flags = useAppSelector(
+    (state) => state.boardReducer.flags
   );
 
   const dispatch = useAppDispatch();

@@ -3,11 +3,14 @@ import { ofType } from "redux-observable";
 import { map, filter, delay } from "rxjs";
 import { IMoveInfo, History, IStatistic } from "../interfaces/interface";
 
-const flags = { player: "x", bot: "o" };
-
 interface IBoardSize {
   rowsCount: number;
   colsCount: number;
+}
+
+interface IFlags {
+  player: string;
+  bot: string;
 }
 
 interface IBoardState {
@@ -18,6 +21,7 @@ interface IBoardState {
   gameNum: number;
   currentMoveInfo: IMoveInfo;
   statistic: IStatistic;
+  flags: IFlags;
 }
 
 const initBoardSize: IBoardSize = {
@@ -50,6 +54,10 @@ export const initialState: IBoardState = {
   gameNum: 0,
   currentMoveInfo: initCurrentMoveInfo,
   statistic: initStatistic,
+  flags: {
+    player: "x",
+    bot: "o"
+  }
 };
 
 export const boardSlice = createSlice({
@@ -60,7 +68,7 @@ export const boardSlice = createSlice({
       state,
       action: PayloadAction<{ flag: string; row: number; col: number }>
     ) => {
-      state.board[action.payload.row][action.payload.col] = flags.player;
+      state.board[action.payload.row][action.payload.col] = state.flags.player;
       state.nextTurn = !state.nextTurn;
       state.currentMoveInfo = {
         row: action.payload.row,
@@ -78,7 +86,7 @@ export const boardSlice = createSlice({
         randCol = Math.round(random(0, initBoardSize.colsCount - 1));
       } while (state.board[randRow][randCol] !== "");
 
-      state.board[randRow][randCol] = flags.bot;
+      state.board[randRow][randCol] = state.flags.bot;
       state.nextTurn = !state.nextTurn;
       state.currentMoveInfo = { row: randRow, col: randCol, isPlayer: false };
     },
@@ -131,14 +139,14 @@ export const botMoveEpic = (actions$: any, state$: any) =>
       const nextTurn = state$.value.boardReducer.nextTurn;
       const board = state$.value.boardReducer.board;
 
-      if (winner === flags.bot) {
+      if (winner === state$.value.boardReducer.flags.bot) {
         action.payload.setStatistic((prevState: any) => ({
           ...prevState,
           bot: state$.value.boardReducer.statistic.botWinCount,
         }));
       }
 
-      if (winner === flags.player) {
+      if (winner === state$.value.boardReducer.flags.player) {
         action.payload.setStatistic((prevState: any) => ({
           ...prevState,
           player: state$.value.boardReducer.statistic.playerWinCount,
