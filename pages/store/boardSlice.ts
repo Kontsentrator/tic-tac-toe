@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ofType } from "redux-observable";
 import { map, filter, delay } from "rxjs";
-import { IMoveInfo, History, IStatistic } from "../interfaces/interface";
+import { IMoveInfo, IStatistic } from "../interfaces/interface";
 
 interface IBoardSize {
   rowsCount: number;

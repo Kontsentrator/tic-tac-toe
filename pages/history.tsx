@@ -1,5 +1,5 @@
 import cn from "classnames";
-import React, { useState, memo } from "react";
+import React, { memo } from "react";
 import { GetStaticProps } from "next";
 import { IStatistic } from "./interfaces/interface";
 import styles from "./history.module.scss";
