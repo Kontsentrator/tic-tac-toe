@@ -13,19 +13,23 @@ const API_ENDPOINT = "http://localhost:3000/api";
 const RESOURCE = "/board";
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  let error: Error = Error();
-  const statistic: IStatistic = await fetch(API_ENDPOINT + RESOURCE).then(
-    (res) => res.json().catch((err) => {error = err; return null})
-  );
-  return { props: { statistic: statistic, error: error.message } };
+  try {
+    const statistic: IStatistic = await fetch(API_ENDPOINT + RESOURCE).then(
+      (res) => res.json()
+    );
+    return { props: { statistic: statistic } };
+  } catch (error) {
+    return { props: { error: error.message } };
+  }
 };
 
 const History: React.FC<IHistoryProps> = ({ statistic, error }) => {
   return (
     <div className={styles.history}>
-      {error && <div className={styles.history__error}>{error}</div>}
-      {statistic &&
-        statistic.history.map(
+      {error ? (
+        <div className={styles.history__error}>{error}</div>
+      ) : (
+        statistic?.history.map(
           (game, index) =>
             game && (
               <div key={index} className={styles.history__game}>
@@ -50,7 +54,8 @@ const History: React.FC<IHistoryProps> = ({ statistic, error }) => {
                 ))}
               </div>
             )
-        )}
+        )
+      )}
     </div>
   );
 };
