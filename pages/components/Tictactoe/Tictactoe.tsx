@@ -47,11 +47,6 @@ const TicTacToe = () => {
   const dispatch = useAppDispatch();
 
   // -------------- Эффекты -------------
-
-  useEffect(() => {
-    console.log(error);
-  }, [error]);
-
   useEffect(() => {
     dispatch({ type: "ADD_HISTORY" });
   }, [currentMoveInfo]);
