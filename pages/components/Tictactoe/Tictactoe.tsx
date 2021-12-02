@@ -61,9 +61,11 @@ const TicTacToe = () => {
     if (!winner && checkWinner(flag, board)) {
       dispatch({ type: setWinner.type, payload: flag });
 
-      if (flag === flags.bot) dispatch({ type: increaseBotWinCount });
-      else if (flag === flags.player)
+      if (flag === flags.bot) {
+        dispatch({ type: increaseBotWinCount });
+      } else if (flag === flags.player) {
         dispatch({ type: increasePlayerWinCount });
+      }
     }
   }, [board, nextTurn]);
 
