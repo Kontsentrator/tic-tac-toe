@@ -1,9 +1,4 @@
-import React, {
-  memo,
-  useEffect,
-  useState,
-  useContext,
-} from "react";
+import React, { memo, useEffect, useState, useContext } from "react";
 import Link from "next/link";
 import Cell from "../Cell";
 import StatisticMenu from "../StatisticMenu";
@@ -17,6 +12,7 @@ import {
 } from "../../store/boardSlice";
 import { IStatistic } from "../../interfaces/interface";
 import { statistic as dataStatistic } from "../../data/statistic";
+import { flags } from "../../constants/constants";
 import { WinCountContext } from "../../data/context";
 import { checkWinner } from "./checkWinner";
 
@@ -39,9 +35,6 @@ const TicTacToe = () => {
   const winner = useAppSelector((state) => state.boardReducer.winner);
   const history = useAppSelector(
     (state) => state.boardReducer.statistic.history
-  );
-  const flags = useAppSelector(
-    (state) => state.boardReducer.flags
   );
 
   const dispatch = useAppDispatch();
